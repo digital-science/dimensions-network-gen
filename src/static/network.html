@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Topic Collaboration Network</title>
+</head>
+<body style="margin: 0; padding: 0;">
+    <div id="placeholder"></div>
+
+    <script>
+        var urlParams = new URLSearchParams(window.location.search);
+        var topicId = urlParams.get('topicId');
+        var network = urlParams.get('network');
+
+        page_title = "Topic Collaboration Network";
+
+        baseReportUrl = "vosviewer.html"
+        params = ""
+
+        switch(network) {
+            case "collab":
+                params = "max_label_length=60&max_n_links=5000&repulsion=2&attraction=5&json=networks/collab_authors/" + topicId + ".json"
+                break;
+            case "collab_orgs":
+                params = "max_label_length=60&max_n_links=5000&repulsion=2&attraction=5&json=networks/collab_orgs/" + topicId + ".json"
+                break;
+            case "concepts":
+                params = "?max_n_links=5000&repulsion=2&attraction=5&json=networks/concepts/" + topicId + ".json"
+                break;
+        }
+
+        toLoad = baseReportUrl + "?" + params
+
+        document.title = page_title + ": " + topicId.replace('_', ' ');
+        var ifrm = document.createElement("iframe");
+        ifrm.setAttribute("src", toLoad);
+        ifrm.frameBorder = "0";
+        ifrm.allowFullscreen = true;
+
+        document.body.appendChild(ifrm);
+
+        var replaceElement = document.querySelector('div#placeholder');
+        replaceElement.parentNode.replaceChild(ifrm, replaceElement);
+    </script>
+
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        iframe {
+            width: 100%;
+            width: 100vw;
+            height: 100%;
+            height: 100vh;
+            max-width:100%;
+            max-height: 100%;
+            border: 0;
+        }
+    </style>
+</body>
+</html>
