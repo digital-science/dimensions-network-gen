@@ -33,17 +33,18 @@ $ networkgen
     help="Start the webserver.")
 @click.option(
     "--port", "-p", default=8009,
-    help="Specify the port on which the webserver should listen for connections (default: 8000).")
+    help="Specify the port on which the webserver should listen for connections (default: 8009).")
 @click.option('--examples', is_flag=True, help='Show some examples')
+@click.option('--verbose', is_flag=True, help='Verbose mode')
 @click.pass_context
 def main_cli(ctx, filename=None,  
                 examples=False, 
+                verbose=False, 
                 buildall=False, 
                 overwrite=False, 
                 server=False, 
                 port=None,):
-    """networkgen: a tool for creating VOSviewer network visualizations powered by data from Dimensions on G
-Google BigQuery.
+    """dim-networkgen: a tool for creating network visualizations powered by data from Dimensions on Google BigQuery.
 
 FILENAME. The name of the file in the 'input' directory to be converted into a network.     
 """
@@ -78,12 +79,10 @@ FILENAME. The name of the file in the 'input' directory to be converted into a n
 
             for topic, tasks in todo.items():
                 for task in tasks:
-                    if task == 'collab_authors':
-                        network.gen_collab_network(topic, config['collab_authors'])
-                    elif task == 'collab_orgs':
-                        network.gen_orgs_collab_network(topic, config['collab_orgs'], verbose=True)
+                    if task == 'collab_orgs':
+                        network.gen_orgs_collab_network(topic, config['collab_orgs'], verbose)
                     elif task == 'concepts':
-                        network.gen_concept_network(topic, config['concepts'])
+                        network.gen_concept_network(topic, config['concepts'], verbose)
         else:
             printDebug('There were no input files detected in the "input" directory that did not already have networks defined. To recalculate these networks, include the `--overwrite` flag.\n')
 

@@ -42,7 +42,7 @@ def gen_index(tasks=TASKS):
 
 
 
-def _build_network(data, node, link, outfile_name):
+def gen_vosviewer_json(data, node, link, outfile_name):
     """
     Shared function that accepts pairwise data returned from BigQuery and
     converts it into a VOSviewer JSON file.
@@ -52,7 +52,7 @@ def _build_network(data, node, link, outfile_name):
             to include 5 elements: node1_id, node1_name, node2_id, node2_name,
             and a final integer indicating the strength of the link between
             node1 and node2.
-        - node (string): What does a single node represent? Ex. "Researcher"
+        - node (string): What does a single node represent? Ex. "Organization"
         - link (string): What does a single link represent? Ex. "Publication"
         - outfile_name (string): Path to output file and location
     """
@@ -137,105 +137,6 @@ def _build_network(data, node, link, outfile_name):
 
 
 
-
-
-def gen_collab_network(topic, config):
-    """
-    Builds a collaboration network indicating links between researchers
-    within the subset of publications defined by the user.
-
-    Inputs:
-      - topic (string): The name of the topic to be evaluated. Essentially
-            just the input filename with the SQL extension stripped off.
-      - config (dict): Key-value pairs of configuration values required below.
-    """
-
-    db = bqdata.Client()
-
-    with open(f'{DEFAULT_INPUT_LOCATION}/{topic}.sql', "r") as input:
-        subquery = input.read()
-
-    printDebug(f'Starting researchers collaboration network generation for:')
-    printDebug(f'  ... {DEFAULT_INPUT_LOCATION}/{topic}.sql', "important")
-
-    # fetch links
-    q = f"""
-    WITH subset AS (
-        {subquery}
-    ),
-    top_nodes AS (
-        SELECT rid, COUNT(p.id) AS pubs
-        FROM `dimensions-ai.data_analytics.publications` p
-        CROSS JOIN UNNEST(p.researcher_ids) rid
-        WHERE id IN (SELECT id FROM subset)
-        GROUP BY 1
-        ORDER BY 2 DESC
-        LIMIT @max_nodes
-    ),
-    links AS (
-        SELECT
-             CONCAT(
-                r1.first_name,
-                ' ',
-                r1.last_name,
-                ' (',
-                COALESCE(grid1.name, 'unknown org'),
-                ')'
-            ) AS r1
-            ,CONCAT(
-                r2.first_name,
-                ' ',
-                r2.last_name,
-                ' (',
-                COALESCE(grid2.name, 'unknown org'),
-                ')'
-            ) AS r2
-            ,COUNT(DISTINCT p.id) AS collabs
-        FROM `dimensions-ai.data_analytics.publications` p
-        CROSS JOIN UNNEST(researcher_ids) r1_id
-        CROSS JOIN UNNEST(researcher_ids) r2_id
-        INNER JOIN `dimensions-ai.data_analytics.researchers` r1
-            ON r1_id=r1.id
-        LEFT JOIN `dimensions-ai.data_analytics.grid` grid1
-            ON r1.current_research_org=grid1.id
-        INNER JOIN `dimensions-ai.data_analytics.researchers` r2
-            ON r2_id=r2.id
-        LEFT JOIN `dimensions-ai.data_analytics.grid` grid2
-            ON r2.current_research_org=grid2.id
-        WHERE p.id IN (SELECT id FROM subset)
-            AND r1_id > r2_id -- to prevent dupes
-            AND r1.first_name IS NOT NULL
-            AND r2.first_name IS NOT NULL
-            AND r1.last_name IS NOT NULL
-            AND r2.last_name IS NOT NULL
-            AND r1_id IN (SELECT rid FROM top_nodes)
-            AND r2_id IN (SELECT rid FROM top_nodes)
-        GROUP BY 1,2
-    )
-
-    SELECT *
-    FROM links
-    WHERE collabs >= @min_edge_weight
-    """
-
-    params = [
-        ("topic", "STRING", topic),
-        ("min_edge_weight", "INT64", config['min_edge_weight']),
-        ("max_nodes", "INT64", config['max_nodes'])
-    ]
-
-    data = db.send_query(q, params=params)
-
-    printDebug('  Network data retrieved from BigQuery.')
-
-    _build_network(data, 'Researcher', 'Publication',
-        f"{DEFAULT_OUTPUT_NETWORKS}/collab_authors/{topic.replace(' ', '_')}.json")
-
-
-
-
-
-
 def gen_orgs_collab_network(topic, config, verbose=False):
     """
     Builds a collaboration network indicating links between organizations
@@ -316,7 +217,7 @@ def gen_orgs_collab_network(topic, config, verbose=False):
 
     printDebug('  Network data retrieved from BigQuery.')
 
-    _build_network(data, 'Organizations', 'Publication',
+    gen_vosviewer_json(data, 'Organizations', 'Publication',
         f"{DEFAULT_OUTPUT_NETWORKS}/collab_orgs/{topic.replace(' ', '_')}.json")
 
 
@@ -325,7 +226,7 @@ def gen_orgs_collab_network(topic, config, verbose=False):
 
 
 
-def gen_concept_network(topic, config):
+def gen_concept_network(topic, config, verbose=False):
     """
     Builds a concept co-occurrence network indicating links between
     concepts, within the subset of publications defined by the user.
@@ -336,7 +237,7 @@ def gen_concept_network(topic, config):
       - config (dict): Key-value pairs of configuration values required below.
     """
 
-    db = bqdata.Client()
+    db = bqdata.Client(verbose=verbose)
 
     with open(f'{DEFAULT_INPUT_LOCATION}/{topic}.sql', "r") as input:
         subquery = input.read()
@@ -398,5 +299,5 @@ def gen_concept_network(topic, config):
 
     printDebug('  Network data retrieved from BigQuery.')
 
-    _build_network(data, 'Researcher', 'Publication',
+    gen_vosviewer_json(data, 'Researcher', 'Publication',
         f"{DEFAULT_OUTPUT_NETWORKS}/concepts/{topic.replace(' ', '_')}.json")

@@ -1,7 +1,25 @@
 # Dimensions Network Generation tool
 
-A tool for creating network visualizations powered by data from Dimensions on G
-Google BigQuery. Currenlty the main output visualization is VOSviewer. More visualizations will be added in the future.
+A tool for creating network visualizations powered by data from Dimensions on Google BigQuery. 
+
+Currenlty the main output visualization is VOSviewer. More visualizations will be added in the future.
+
+## Datasets
+
+By default the tool uses the [Dimensions COVID-19 dataset](https://console.cloud.google.com/marketplace/product/digitalscience-public/covid-19-dataset-dimensions) that is openly available on the Google Cloud Marketplace, and contains all published articles and preprints, grants, clinical trials, and research datasets from Dimensions.ai that are related to COVID-19.
+
+At time of writing (Feb 2021), the dataset contains:
+
+* 300k+ publications and preprints
+* 5000+ grants worth £4.5bn+
+* 8000+ clinical trials
+* 10k+ research datasets
+* 100k+ research organizations
+
+### How to use the full Dimensions dataset
+
+The tool can be updated to so use the full Dimensions dataset (subscription-based). See the relevant `USE_COVID_DIMENSIONS` setting in `settings.py`. 
+
 
 ## Installation
 
@@ -15,16 +33,13 @@ If you are only viewing already-created networks, no external software is requir
 * File names should be of the format `$title.sql`.
   * For example, a file called `archaeology.sql` will create a network listed under the title "archaeology".
 
-Example contents of `archaeology.sql`:
-
-> UPDATE
+Example contents of `last_30_days.sql`:
 
 ```sql
-SELECT id
-FROM `covid-19-dimensions-ai.data.publications`
-WHERE
-    year >= 2019
-    AND '2101' IN UNNEST(category_for.second_level.codes)
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
 ```
 
 ## Running
@@ -32,17 +47,13 @@ WHERE
 > UPDATE
 
 ```sh
-git clone git@gitlab.com:digital-science/dimensions/data-solutions/networkgen.git
-cd networkgen
+git clone git@github.com:digital-science/dimensions-network-gen.git
+cd dimensions-network-gen
 python3 -m venv .
 source bin/activate
 pip3 install -r requirements.txt
-cd networkgen # yes, this happens twice
-
-# if you want to run tests:
-python3 -m unittest
-# if you want to just execute the script:
-python3 networkgen.py
+pip install -e .
+dim-networkgen --help
 ```
 
 ### Command-line options

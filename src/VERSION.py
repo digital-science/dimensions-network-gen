@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 #  -*- coding: UTF-8 -*-
 
-__version__ = "0.1" 
+__version__ = "0.2" 
 __copyright__ = "CopyRight (C) 2021 Digital Science"
 __license__ = "MIT"
 __author__ = "Richard Abdill / Michele Pasin"
