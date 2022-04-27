@@ -44,7 +44,7 @@ EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
 
 ## Running
 
-> UPDATE
+> REVIEW
 
 ```sh
 git clone git@github.com:digital-science/dimensions-network-gen.git
@@ -58,7 +58,7 @@ dim-networkgen --help
 
 ### Command-line options
 
-> UPDATE
+> REVIEW
 
 The `python3 networkgen.py` command accepts several optional flags. The main actions are `buildall`, `build` and `server`. **If none of these three flags are supplied, the default approach is to complete the `buildall` and `server` steps.**:
 
@@ -68,7 +68,7 @@ The `python3 networkgen.py` command accepts several optional flags. The main act
 
 #### Options
 
-> UPDATE
+> REVIEW
 
 * `-o`, `--overwrite`: Modifies the `buildall` operation. By default, existing networks are not recalculated when the `buildall` script is run. The overwrite flag indicates all input files should be reevaluated, regardless of whether an output file already exists.
 * `-p`, `--port $PORT_NUM`: Modifies the `server` operation. Specifies the port on which the web server is listening. Default is 8000.
