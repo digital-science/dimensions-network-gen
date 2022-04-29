@@ -1,20 +1,22 @@
 # Dimensions Network Generation tool
 
-A tool for creating network visualizations powered by data from Dimensions on Google BigQuery. 
+A Python tool for creating network visualizations powered by data from Dimensions on Google BigQuery. 
 
-Currenlty the main output visualization is VOSviewer. More visualizations will be added in the future.
+Currenlty the main output visualization supported is VOSviewer. More visualizations will be added in the future.
 
 ## Datasets
 
 By default the tool uses the [Dimensions COVID-19 dataset](https://console.cloud.google.com/marketplace/product/digitalscience-public/covid-19-dataset-dimensions) that is openly available on the Google Cloud Marketplace, and contains all published articles and preprints, grants, clinical trials, and research datasets from Dimensions.ai that are related to COVID-19.
 
-At time of writing (Feb 2021), the dataset contains:
+At time of writing (May 2022), the dataset contains:
 
-* 300k+ publications and preprints
-* 5000+ grants worth £4.5bn+
-* 8000+ clinical trials
-* 10k+ research datasets
-* 100k+ research organizations
+* 1M+  Publications and preprints
+* 16k+ Grants
+* 41k+ Patents
+* 14k+ Clinical Trials
+* 32k+ Research Datasets
+* 36k+ Research Organizations
+
 
 ### How to use the full Dimensions dataset
 
