@@ -2,7 +2,7 @@
 
 A Python tool for creating network visualizations powered by data from Dimensions on Google BigQuery. 
 
-Currenlty the main output visualization supported is VOSviewer. More visualizations will be added in the future.
+Currenlty the main output visualization supported is [VOSviewer](https://www.vosviewer.com/). More visualizations will be added in the future.
 
 ## Datasets
 
@@ -24,7 +24,10 @@ The tool can be updated to so use the full Dimensions dataset (subscription-base
 
 ## Example outputs
 
+A concept network:
 ![concepts-network](/screenshots/concepts-network.png)
+
+An organization collaboration network:
 
 ![organizations-network.png](/screenshots/organizations-network.png)
 
