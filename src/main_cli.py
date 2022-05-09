@@ -10,12 +10,6 @@ from .networkgen import network
 from .networkgen import server as run_server 
 
 
-CMD_LINE_EXAMPLES = """SOME EXAMPLES HERE:
-$ networkgen
- => returns some nice text
-"""
-
-
 
 @click.command()
 @click.argument('filename', nargs=-1)
@@ -34,24 +28,20 @@ $ networkgen
 @click.option(
     "--port", "-p", default=8009,
     help="Specify the port on which the webserver should listen for connections (default: 8009).")
-@click.option('--examples', is_flag=True, help='Show some examples')
 @click.option('--verbose', is_flag=True, help='Verbose mode')
 @click.pass_context
 def main_cli(ctx, filename=None,  
-                examples=False, 
                 verbose=False, 
                 buildall=False, 
                 overwrite=False, 
                 server=False, 
                 port=None,):
-    """dim-networkgen: a tool for creating network visualizations powered by data from Dimensions on Google BigQuery.
+    """dim-networkgen: a tool for creating network visualizations powered by data from Dimensions on Google BigQuery. Example: 
+
+networkgen {FILENAME}
 
 FILENAME. The name of the file in the 'input' directory to be converted into a network.     
 """
-
-    if examples:
-        printInfo(CMD_LINE_EXAMPLES, fg="green")
-        return
 
     if not filename and not buildall and not server:
         # print dir(search_cli)
