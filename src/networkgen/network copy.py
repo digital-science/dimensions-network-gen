@@ -7,6 +7,40 @@ from .helpers import *
 
 
 
+def gen_index(tasks=TASKS):
+    """
+    Generates the dynamic component of the web page that
+    displays links to all the generated networks. Combines
+    input data with "index_template.html" to generate
+    a file called "index.html".
+    """
+
+    todo = list_networks(tasks)
+
+    if len(todo.keys()) > 0:
+        body = "<ul>"
+        for topic, files in todo.items():
+            body += f"<li><strong>{topic}</strong> &ndash; "
+
+            if 'collab_authors' in files:
+                body += f"(<a href='network.html?topicId={topic}&network=collab'>collaboration</a>) "
+            if 'collab_orgs' in files:
+                body += f"(<a href='network.html?topicId={topic}&network=collab_orgs'>collaboration orgs</a>) "
+            if 'concepts' in files:
+                body += f"(<a href='network.html?topicId={topic}&network=concepts'>concepts</a>)</li>"
+
+        body += "</ul>"
+    else:
+        body = "<em>(No network definitions were found.)</em>"
+
+    with open(f'{PROJECT_STATIC_FOLDER}/index_template.html', "r") as input:
+        template = input.read()
+    template = template.replace('<!-- BODY HERE -->', body)
+
+    with open(f'{DEFAULT_OUTPUT_LOCATION}/index.html', "w") as output:
+        output.write(template)
+
+
 
 def gen_vosviewer_json(data, node, link, outfile_name):
     """
@@ -103,7 +137,7 @@ def gen_vosviewer_json(data, node, link, outfile_name):
 
 
 
-def gen_orgs_collab_network(sql_file, config, fulldimensions=False, verbose=False):
+def gen_orgs_collab_network(topic, config, fulldimensions=False, verbose=False):
     """
     Builds a collaboration network indicating links between organizations
     within the subset of publications defined by the user.
@@ -117,11 +151,11 @@ def gen_orgs_collab_network(sql_file, config, fulldimensions=False, verbose=Fals
     db = bqdata.Client(verbose=verbose)
     DIMENSIONS_DATASET = gbq_dataset_name(fulldimensions)
 
-    with open(sql_file, "r") as input:
+    with open(f'{DEFAULT_INPUT_LOCATION}/{topic}.sql', "r") as input:
         subquery = input.read()
 
     printDebug(f'Starting orgs collaboration network generation for:', "important")
-    printDebug(f'  ... {sql_file}', "comment")
+    printDebug(f'  ... {DEFAULT_INPUT_LOCATION}/{topic}.sql', "comment")
 
     # fetch links
     q = f"""
@@ -175,7 +209,7 @@ def gen_orgs_collab_network(sql_file, config, fulldimensions=False, verbose=Fals
     """
 
     params = [
-        # ("topic", "STRING", topic),
+        ("topic", "STRING", topic),
         ("min_edge_weight", "INT64", config['min_edge_weight']),
         ("max_nodes", "INT64", config['max_nodes'])
     ]
@@ -184,9 +218,8 @@ def gen_orgs_collab_network(sql_file, config, fulldimensions=False, verbose=Fals
 
     printDebug('  Network data retrieved from BigQuery.')
 
-    json_file_name = sql_file.split("/")[-1].replace(' ', '_').replace('.sql', '.json')
     gen_vosviewer_json(data, 'Organizations', 'Publication',
-        f"{DEFAULT_OUTPUT_NETWORKS}/collab_orgs/{json_file_name}")
+        f"{DEFAULT_OUTPUT_NETWORKS}/collab_orgs/{topic.replace(' ', '_')}.json")
 
 
 
@@ -208,11 +241,11 @@ def gen_concept_network(sql_file, config,  fulldimensions=False, verbose=False):
     db = bqdata.Client(verbose=verbose)
     DIMENSIONS_DATASET = gbq_dataset_name(fulldimensions)
 
-    with open(sql_file, "r") as input:
+    with open(f'{DEFAULT_INPUT_LOCATION}/{topic}.sql', "r") as input:
         subquery = input.read()
 
     printDebug(f'Starting concept co-occurrence network generation for:', "important")
-    printDebug(f'  ... {sql_file}', "comment")
+    printDebug(f'  ... {DEFAULT_INPUT_LOCATION}/{topic}.sql', "comment")
 
     # fetch links
     q = f"""
@@ -261,51 +294,12 @@ def gen_concept_network(sql_file, config,  fulldimensions=False, verbose=False):
         ("min_link_relevance", "NUMERIC", config['min_link_relevance']),
         ("min_concept_frequency", "INT64", config['min_concept_frequency']),
         ("min_edge_weight", "INT64", config['min_edge_weight']),
-        # ("topic", "STRING", topic)
+        ("topic", "STRING", topic)
     ]
 
     data = db.send_query(q, params=params)
 
     printDebug('  Network data retrieved from BigQuery.')
 
-    json_file_name = sql_file.split("/")[-1].replace(' ', '_').replace('.sql', '.json')
     gen_vosviewer_json(data, 'Researcher', 'Publication',
-        f"{DEFAULT_OUTPUT_NETWORKS}/concepts/{json_file_name}")
-
-
-
-
-
-def gen_index(tasks=TASKS):
-    """
-    Generates the dynamic component of the web page that
-    displays links to all the generated networks. Combines
-    input data with "index_template.html" to generate
-    a file called "index.html".
-    """
-
-    todo = list_networks(tasks)
-
-    if len(todo.keys()) > 0:
-        body = "<ul>"
-        for topic, files in todo.items():
-            body += f"<li><strong>{topic}</strong> &ndash; "
-
-            if 'collab_authors' in files:
-                body += f"(<a href='network.html?topicId={topic}&network=collab'>collaboration</a>) "
-            if 'collab_orgs' in files:
-                body += f"(<a href='network.html?topicId={topic}&network=collab_orgs'>collaboration orgs</a>) "
-            if 'concepts' in files:
-                body += f"(<a href='network.html?topicId={topic}&network=concepts'>concepts</a>)</li>"
-
-        body += "</ul>"
-    else:
-        body = "<em>(No network definitions were found.)</em>"
-
-    with open(f'{PROJECT_STATIC_FOLDER}/index_template.html', "r") as input:
-        template = input.read()
-    template = template.replace('<!-- BODY HERE -->', body)
-
-    with open(f'{DEFAULT_OUTPUT_LOCATION}/index.html', "w") as output:
-        output.write(template)
-
+        f"{DEFAULT_OUTPUT_NETWORKS}/concepts/{topic.replace(' ', '_')}.json")

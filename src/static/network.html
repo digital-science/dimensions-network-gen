@@ -19,9 +19,6 @@
         params = ""
 
         switch(network) {
-            case "collab":
-                params = "max_label_length=60&max_n_links=5000&repulsion=2&attraction=5&json=networks/collab_authors/" + topicId + ".json"
-                break;
             case "collab_orgs":
                 params = "max_label_length=60&max_n_links=5000&repulsion=2&attraction=5&json=networks/collab_orgs/" + topicId + ".json"
                 break;

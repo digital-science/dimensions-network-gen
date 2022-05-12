@@ -16,15 +16,19 @@ from . import bqdata
 
 
 
+def gbq_dataset_name(fulldimensions_flag):
+    """
+    Returns the name of the dataset in Google BigQuery.
+    """
+    if not fulldimensions_flag:
+        return "covid-19-dimensions-ai.data"
+    else:
+        return "dimensions-ai.data_analytics"
+
+
 def set_up_env():
     "Set up basic environment"
     
-
-    # make sure input directory is there
-    try:
-        os.makedirs(DEFAULT_INPUT_LOCATION)
-    except FileExistsError:
-        pass
 
     # make sure output directories are there
     for task in TASKS:
@@ -46,10 +50,6 @@ def set_up_env():
     # defines how to parse each config value
     # we need
     convert = {
-        'collab_authors': {
-            'max_nodes': int,
-            'min_edge_weight': int
-        },
         'collab_orgs': {
             'max_nodes': int,
             'min_edge_weight': int
@@ -100,41 +100,6 @@ def list_networks(tasks, root=DEFAULT_OUTPUT_NETWORKS):
 
 
 
-def determine_todo(dirname=DEFAULT_INPUT_LOCATION, overwrite=False, single_topic=None):
-    """
-    Returns the filenames of all files (and directories)
-    ending with a ".sql" extension in the specified directory.
-    It does NOT return results that already have results generated.
-
-    Inputs:
-      - dirname (string): path to the directory of interest.
-            Accepts absolute or relative paths.
-      - overwrite (bool): When True, existing JSON files will
-            be discarded in favor of newly calculated ones. When
-            False, input SQL files with existing output JSON
-            files will be skipped.
-    """
-
-    todo = defaultdict(list)
-
-    if single_topic is not None:
-        inputs = [single_topic]
-    else:
-        input_names = os.listdir(dirname)
-        inputs = [x[:-4] for x in input_names if x[-4:] == '.sql']
-
-    done = list_networks(TASKS)
-
-    for input in inputs:
-        for task in TASKS:
-            if overwrite or task not in done[input]:
-                todo[input].append(task)
-
-    return todo
-
-
-
-
 def _test_user_login():
     """
     Returns a boolean value indicating whether the user
@@ -159,10 +124,10 @@ def user_login():
 
     # If they're already logged in, we're good:
     if _test_user_login():
-        printDebug('DEBUG: gcloud credentials found. Skipping login.')
+        printDebug('Gcloud credentials found. Skipping login.', "comment")
         return
 
-    printDebug('DEBUG: Logging in.')
+    printDebug('Gcloud: Logging in..', "comment")
     # if they aren't logged in, do it:
     bashCommand = "gcloud auth login --brief"
     try:

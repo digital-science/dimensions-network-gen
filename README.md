@@ -2,7 +2,21 @@
 
 A Python tool for creating network visualizations powered by data from Dimensions on Google BigQuery. 
 
+
+## Visualization
+
 Currenlty the main output visualization supported is [VOSviewer](https://www.vosviewer.com/). More visualizations will be added in the future.
+
+### Example outputs
+
+A concept network:
+![concepts-network](/screenshots/concepts-network.png)
+
+An organization collaboration network:
+
+![organizations-network.png](/screenshots/organizations-network.png)
+
+
 
 ## Datasets
 
@@ -20,17 +34,9 @@ At time of writing (May 2022), the dataset contains:
 
 ### How to use the full Dimensions dataset
 
-The tool can be updated to so use the full Dimensions dataset (subscription-based). See the relevant `USE_COVID_DIMENSIONS` setting in `settings.py`. 
+The tool can be updated to so use the full Dimensions dataset (subscription-based). 
 
-## Example outputs
-
-A concept network:
-![concepts-network](/screenshots/concepts-network.png)
-
-An organization collaboration network:
-
-![organizations-network.png](/screenshots/organizations-network.png)
-
+Pass the `-d` option when invoking the script. 
 
 
 ## Installation
@@ -40,7 +46,7 @@ If you are only viewing already-created networks, no external software is requir
 ## Input
 
 * Network-level configuration options are defined in the file at `user-input/config.ini`.
-* Each visualization generated is based on a subset of publications that you can define using SQL. **These definitions are stored in the `user-input/` directory**.
+* Each visualization generated is based on a subset of publications that you can define using SQL. **Example SQL definitions are stored in the `user-input-examples/` directory**.
 * Each file should contain a single SQL query that returns a list of Dimensions publication IDs **in a field called `id`**.
 * File names should be of the format `$title.sql`.
   * For example, a file called `archaeology.sql` will create a network listed under the title "archaeology".
@@ -57,56 +63,43 @@ EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
 
 ## Installation
 
-> REVIEW
 
-```sh
-git clone git@github.com:digital-science/dimensions-network-gen.git
-cd dimensions-network-gen
-python3 -m venv .
-source bin/activate
-pip3 install -r requirements.txt
-pip install -e .
-dim-networkgen --help
+
+With Python 3.9 and [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/index.html)
+
+```bash
+$ git clone git@github.com:digital-science/dimensions-network-gen.git
+$ mkvirtualenv dim-network-gen
+$ pip install -r requirements.txt
+$ pip install -e .
 ```
+
 
 ## Running
 
 After installation, you can run the application by calling `dim-networkgen`.
 
-```
+```bash
 $ dim-networkgen
 Usage: dim-networkgen [OPTIONS] [FILENAME]...
 
   dim-networkgen: a tool for creating network visualizations powered by data
-  from Dimensions on Google BigQuery.
+  from Dimensions on Google BigQuery. Example:
 
-  FILENAME. The name of the file in the 'input' directory to be converted into
-  a network.
+  networkgen {QUERY_FILE}
+
+  QUERY_FILE. File name containing the GBQ query to be converted into a
+  network. If a folder is passed, all files in the folder will be processed.
 
 Options:
-  -a, --buildall      Call BigQuery and construct network definitions.
-  -o, --overwrite     By default, existing networks are not recalculated when
-                      the 'buildall' script is run. The overwrite flag
-                      indicates all input files should be reevaluated,
-                      regardless of whether an output file already exists.
-  -s, --server        Start the webserver.
-  -p, --port INTEGER  Specify the port on which the webserver should listen
-                      for connections (default: 8009).
-  --examples          Show some examples
-  --verbose           Verbose mode
-  --help              Show this message and exit.
+  -i, --buildindex      Just build the index page listing out previously
+                        created networks.
+  -f, --fulldimensions  Query using the full Dimensions dataset, instead of
+                        the COVID19 subset (note: requires subscription).
+  -s, --server          Start the webserver.
+  -p, --port INTEGER    Specify the port on which the webserver should listen
+                        for connections (default: 8009).
+  --verbose             Verbose mode
+  --help                Show this message and exit.
 ```
-
-
-### Command-line options
-
-> REVIEW
-
-The command accepts several optional flags. The main actions are `buildall`, `build` and `server`. **If none of these three flags are supplied, the default approach is to complete the `buildall` and `server` steps.**:
-
-* `-a`, `--buildall`: Run the steps that call BigQuery, build the network files, and prepare the website. Will retrieve and process all files from the `input` directory.
-* `-b`, `--build $INPUT_FILE`: The same steps as `buildall`, except the user can specify a single input file to be processed, instead of processing all of them.
-* `-s`, `--server`: Start the web server (on `localhost:8000`) that displays the web site generated in the "build" step.
-* `-o`, `--overwrite`: Modifies the `buildall` operation. By default, existing networks are not recalculated when the `buildall` script is run. The overwrite flag indicates all input files should be reevaluated, regardless of whether an output file already exists.
-* `-p`, `--port $PORT_NUM`: Modifies the `server` operation. Specifies the port on which the web server is listening. Default is 8000.
 
