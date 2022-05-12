@@ -16,7 +16,9 @@ An organization collaboration network:
 
 ![organizations-network.png](/screenshots/organizations-network.png)
 
+### Live examples
 
+Available at https://digital-science.github.io/dimensions-network-gen/index.html (source code in the `/docs` folder).
 
 ## Datasets
 
