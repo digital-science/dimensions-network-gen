@@ -7,15 +7,6 @@ A Python tool for creating network visualizations powered by data from Dimension
 
 Currenlty the main output visualization supported is [VOSviewer](https://www.vosviewer.com/). More visualizations will be added in the future.
 
-### Example outputs
-
-A concept network:
-![concepts-network](/screenshots/concepts-network.png)
-
-An organization collaboration network:
-
-![organizations-network.png](/screenshots/organizations-network.png)
-
 ### Live examples
 
 Available at https://digital-science.github.io/dimensions-network-gen/index.html (source code in the `/docs` folder).
@@ -41,11 +32,13 @@ The tool can be updated to so use the full Dimensions dataset (subscription-base
 Pass the `-d` option when invoking the script. 
 
 
-## Installation
+## Requirements
+
+### BigQuery 
 
 If you are only viewing already-created networks, no external software is required. However, **connecting to BigQuery to generate new networks requires the installation of the Google Cloud SDK**, "gcloud," available [directly from Google](https://cloud.google.com/sdk/docs/install). If you can open a terminal and the `gcloud` command is recognized, it has been sufficiently configured.
 
-## Input
+### Input files
 
 * Network-level configuration options are defined in the file at `user-input/config.ini`.
 * Each visualization generated is based on a subset of publications that you can define using SQL. **Example SQL definitions are stored in the `user-input-examples/` directory**.
@@ -64,8 +57,6 @@ EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
 
 
 ## Installation
-
-
 
 With Python 3.9 and [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/index.html)
 
@@ -104,4 +95,14 @@ Options:
   --verbose             Verbose mode
   --help                Show this message and exit.
 ```
+
+
+## Screenshots
+
+A concept network:
+![concepts-network](/screenshots/concepts-network.png)
+
+An organization collaboration network:
+
+![organizations-network.png](/screenshots/organizations-network.png)
 
