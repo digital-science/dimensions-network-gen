@@ -47,6 +47,6 @@ docsrc/_build/*
 .idea
 .vsdocs
 
-user-inputs-private
+private
 README_PRIVATE.md
 user-outputs/*
