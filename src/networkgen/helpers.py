@@ -16,6 +16,33 @@ from . import bqdata
 
 
 
+def extract_query_metadata(sql_file):
+    """
+    Extracts metadata from a SQL file. 
+    
+    Return values found or defaults if not found.
+    If a value provided is not accepted, raise an exception.
+
+    """
+
+    with open(sql_file, "r") as input:
+        data = input.readlines()
+
+    METADATA = dict(NETWORK_PARAMETERS_DEFAULT)
+
+    for p in NETWORK_PARAMETERS_DEFAULT:
+        for l in data:
+            if l.startswith("--"):
+                l = l.strip("--").strip()
+                if p+":" in l:
+                    l = l.split(":")
+                    METADATA[p] = l[1].strip()
+
+    # turn the comma separated string into a list we can iterate over
+    METADATA["network_types"] = METADATA["network_types"].replace(",", " ").split()
+    return METADATA
+
+
 def gbq_dataset_name(fulldimensions_flag):
     """
     Returns the name of the dataset in Google BigQuery.
@@ -31,7 +58,7 @@ def set_up_env():
     
 
     # make sure output directories are there
-    for task in TASKS:
+    for task in NETWORK_TYPES:
         try:
             os.makedirs(f'{DEFAULT_OUTPUT_NETWORKS}/{task}')
         except FileExistsError:
@@ -40,36 +67,7 @@ def set_up_env():
     # copy all static files
     shutil.copytree(PROJECT_STATIC_FOLDER, DEFAULT_OUTPUT_LOCATION, dirs_exist_ok=True)
 
-
-    # read configuration
-    config = configparser.ConfigParser()
-    config.read(DEFAULT_NETWORK_INIT)
-
-    # printDebug(f'DEBUG: config file: {config.sections()}')
-
-    # defines how to parse each config value
-    # we need
-    convert = {
-        'collab_orgs': {
-            'max_nodes': int,
-            'min_edge_weight': int
-        },
-        'concepts': {
-            'max_nodes': int,
-            'min_link_relevance': float,
-            'min_concept_frequency': int,
-            'min_edge_weight': int
-        }
-    }
-    parsed = {}
-    for section, fields in convert.items():
-        parsed[section] = {}
-        for field in fields:
-            # printDebug(f'DEBUG: Parsing {section} {field}')
-            func = convert[section][field]
-            parsed[section][field] = func(config[section][field])
-    return parsed
-
+    return
 
 
 

@@ -1,6 +1,6 @@
 # Dimensions Network Generation tool
 
-A Python tool that streamlines the process of creating network visualizations powered by data from Dimensions on Google BigQuery. 
+A Python tool that streamlines the process of creating scientific networks visualizations, by using data from [Dimensions on Google BigQuery](https://www.dimensions.ai/products/bigquery/). 
 
 
 ## Visualization
@@ -92,7 +92,6 @@ Options:
 
 ### Input files
 
-* Network-level configuration options are defined in the file at `user-input/config.ini`.
 * Each visualization generated is based on a subset of publications that you can define using SQL. **Example SQL definitions are stored in the `user-input-examples/` directory**.
 * Each file should contain a single SQL query that returns a list of Dimensions publication IDs **in a field called `id`**.
 * File names should be of the format `$title.sql`.
@@ -106,6 +105,37 @@ from `covid-19-dimensions-ai.data.publications`
 where 
 EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
 ```
+
+### Network configuration
+
+Network-level configuration options are defined in the SQL files as commented lines with a predefined keyword. For example:
+
+```sql
+-- network_types: concepts, collab_orgs
+-- max_nodes: 400 
+-- min_edge_weight: 3
+-- min_concept_relevance: 0.5 
+-- min_concept_frequency: 4
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
+and altmetrics.score > 1
+```
+
+If omitted, the default configuration values will be used.
+
+| Option                | Default               | Notes                                                                                                                                                                    |
+|-----------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| network_types         | concepts, collab_orgs | Currenlty two network types are supported.                                                                                                                               |
+| max_nodes             | 500                   | How many nodes should be displayed, at maximum?                                                                                                                          |
+| min_edge_weight       | 3                     | How many edges should two nodes share before they are linked in the network?                                                                                             |
+| min_concept_relevance | 0.5                   | Each concept tagged to a publication is assigned a relevance score between 0 and 1. What is the threshold that must be cleared before we consider a concept as relevant? |
+| min_concept_frequency | 5                     | How many times should a concept appear in the corpus overall before it's included in the network?                                                                        |
+
+
+
 
 ### Output visualizations
 

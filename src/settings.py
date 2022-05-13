@@ -20,5 +20,14 @@ DEFAULT_NETWORK_INIT = PROJECT_ROOT + "/src/networkgen/config_default.ini"
 
 # network visualizations tasks available
 
-TASKS = ['collab_orgs', 'concepts']
+NETWORK_TYPES = ['collab_orgs', 'concepts']
 
+# network visualizations parameters
+
+NETWORK_PARAMETERS_DEFAULT = {
+    'network_types' : ", ".join(NETWORK_TYPES), 
+    'max_nodes' : 500, 
+    'min_edge_weight' : 3 ,
+    'min_concept_relevance': 0.5, 
+    'min_concept_frequency': 5, 
+}

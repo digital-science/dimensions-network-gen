@@ -8,100 +8,6 @@ from .helpers import *
 
 
 
-def gen_vosviewer_json(data, node, link, outfile_name):
-    """
-    Shared function that accepts pairwise data returned from BigQuery and
-    converts it into a VOSviewer JSON file.
-
-    Inputs:
-        - data (iterable): Results returned by GBQ. Each row is expected
-            to include 5 elements: node1_id, node1_name, node2_id, node2_name,
-            and a final integer indicating the strength of the link between
-            node1 and node2.
-        - node (string): What does a single node represent? Ex. "Organization"
-        - link (string): What does a single link represent? Ex. "Publication"
-        - outfile_name (string): Path to output file and location
-    """
-
-    edges = [] # links between two-concept combinations
-    labels = {}
-
-    try:
-        # for row in data:
-        #     node1_id, node1_name, node2_id, node2_name, collabs = row
-        #     edges.append((node1_id, node2_id, int(collabs)))
-        #     labels[node1_id] = node1_name
-        #     labels[node2_id] = node2_name
-        for row in data:
-            node1_id, node2_id, collabs = row
-            edges.append((node1_id, node2_id, int(collabs)))
-            labels[node1_id] = node1_id
-            labels[node2_id] = node2_id
-    except Exception:
-        printDebug('  Error collating data for network.')
-        raise
-
-    # Data to be written
-    towrite = {
-        "config":{
-            "terminology":{
-                "item": node,
-                "items": f"{node}s",
-                "link": link,
-                "links": f"{link}s",
-                "link_strength": f"{link} collaborations",
-                "total_link_strength": "Total collaborations"
-            },
-            "templates":{
-                # "item_description":"<div class='description_heading'>Researcher</div><div class='description_label'><a class='description_url' href='https://app.dimensions.ai/discover/publication?facet_researcher={id}' target='_blank'>{label}</a></div>"
-                # "link_description":"<div class='description_heading'>Co-authorship link</div><div class='description_label'><a class='description_url' href='/vos/discover/publication?and_facet_researcher={source_id}' target='_blank'>{source_label}</a></div><div class='description_text'>{source_organization} - {source_address}</div><div class='description_label'><a class='description_url' href='/vos/discover/publication?and_facet_researcher={target_id}' target='_blank'>{target_label}</a></div><div class='description_text'>{target_organization} - {target_address}</div>"
-            },
-            "styles":{
-                "description_heading":"color: #757575; font-weight: 600;"
-            }
-        },
-        "network":{
-            "items":[],
-            "links":[]
-        }
-    }
-
-    # build network
-    nodes = []
-
-    try:
-        for edge in edges:
-            nodes.append(edge[0])
-            nodes.append(edge[1])
-            towrite['network']['links'].append({
-                'source_id': edge[0],
-                'target_id': edge[1],
-                'strength': edge[2]
-            })
-        nodes = list(set(nodes))
-    except Exception:
-        printDebug('Error when building list of nodes and edges.')
-        raise
-
-    for node in nodes:
-        towrite['network']['items'].append({
-            'id': node,
-            'label': labels[node],
-            # 'url': f"https://app.dimensions.ai/discover/publication?facet_researcher={node}",
-            # 'description': f"""<a href="https://app.dimensions.ai/discover/publication?facet_researcher={node}">link</a>""",
-        })
-
-    printDebug(f"  Nodes: {len(towrite['network']['items'])}. Edges: {len(towrite['network']['links'])}.")
-    printDebug(f'  Writing network information to file:')
-    printDebug(f'  ... {outfile_name}', "green")
-
-    with open(outfile_name, "w") as outfile:
-        json.dump(towrite, outfile)
-
-    printDebug('  Process complete.')
-
-
-
 
 def gen_orgs_collab_network(sql_file, config, fulldimensions=False, verbose=False):
     """
@@ -258,9 +164,9 @@ def gen_concept_network(sql_file, config,  fulldimensions=False, verbose=False):
 
     params = [
         ("max_nodes", "INT64", config['max_nodes']),
-        ("min_link_relevance", "NUMERIC", config['min_link_relevance']),
-        ("min_concept_frequency", "INT64", config['min_concept_frequency']),
         ("min_edge_weight", "INT64", config['min_edge_weight']),
+        ("min_link_relevance", "NUMERIC", config['min_concept_relevance']),
+        ("min_concept_frequency", "INT64", config['min_concept_frequency']),
         # ("topic", "STRING", topic)
     ]
 
@@ -276,7 +182,105 @@ def gen_concept_network(sql_file, config,  fulldimensions=False, verbose=False):
 
 
 
-def gen_index(tasks=TASKS):
+
+
+def gen_vosviewer_json(data, node, link, outfile_name):
+    """
+    Shared function that accepts pairwise data returned from BigQuery and
+    converts it into a VOSviewer JSON file.
+
+    Inputs:
+        - data (iterable): Results returned by GBQ. Each row is expected
+            to include 5 elements: node1_id, node1_name, node2_id, node2_name,
+            and a final integer indicating the strength of the link between
+            node1 and node2.
+        - node (string): What does a single node represent? Ex. "Organization"
+        - link (string): What does a single link represent? Ex. "Publication"
+        - outfile_name (string): Path to output file and location
+    """
+
+    edges = [] # links between two-concept combinations
+    labels = {}
+
+    try:
+        # for row in data:
+        #     node1_id, node1_name, node2_id, node2_name, collabs = row
+        #     edges.append((node1_id, node2_id, int(collabs)))
+        #     labels[node1_id] = node1_name
+        #     labels[node2_id] = node2_name
+        for row in data:
+            node1_id, node2_id, collabs = row
+            edges.append((node1_id, node2_id, int(collabs)))
+            labels[node1_id] = node1_id
+            labels[node2_id] = node2_id
+    except Exception:
+        printDebug('  Error collating data for network.')
+        raise
+
+    # Data to be written
+    towrite = {
+        "config":{
+            "terminology":{
+                "item": node,
+                "items": f"{node}s",
+                "link": link,
+                "links": f"{link}s",
+                "link_strength": f"{link} collaborations",
+                "total_link_strength": "Total collaborations"
+            },
+            "templates":{
+                # "item_description":"<div class='description_heading'>Researcher</div><div class='description_label'><a class='description_url' href='https://app.dimensions.ai/discover/publication?facet_researcher={id}' target='_blank'>{label}</a></div>"
+                # "link_description":"<div class='description_heading'>Co-authorship link</div><div class='description_label'><a class='description_url' href='/vos/discover/publication?and_facet_researcher={source_id}' target='_blank'>{source_label}</a></div><div class='description_text'>{source_organization} - {source_address}</div><div class='description_label'><a class='description_url' href='/vos/discover/publication?and_facet_researcher={target_id}' target='_blank'>{target_label}</a></div><div class='description_text'>{target_organization} - {target_address}</div>"
+            },
+            "styles":{
+                "description_heading":"color: #757575; font-weight: 600;"
+            }
+        },
+        "network":{
+            "items":[],
+            "links":[]
+        }
+    }
+
+    # build network
+    nodes = []
+
+    try:
+        for edge in edges:
+            nodes.append(edge[0])
+            nodes.append(edge[1])
+            towrite['network']['links'].append({
+                'source_id': edge[0],
+                'target_id': edge[1],
+                'strength': edge[2]
+            })
+        nodes = list(set(nodes))
+    except Exception:
+        printDebug('Error when building list of nodes and edges.')
+        raise
+
+    for node in nodes:
+        towrite['network']['items'].append({
+            'id': node,
+            'label': labels[node],
+            # 'url': f"https://app.dimensions.ai/discover/publication?facet_researcher={node}",
+            # 'description': f"""<a href="https://app.dimensions.ai/discover/publication?facet_researcher={node}">link</a>""",
+        })
+
+    printDebug(f"  Nodes: {len(towrite['network']['items'])}. Edges: {len(towrite['network']['links'])}.")
+    printDebug(f'  Writing network information to file:')
+    printDebug(f'  ... {outfile_name}', "green")
+
+    with open(outfile_name, "w") as outfile:
+        json.dump(towrite, outfile)
+
+    printDebug('  Process complete.')
+
+
+
+
+
+def gen_index():
     """
     Generates the dynamic component of the web page that
     displays links to all the generated networks. Combines
@@ -284,7 +288,7 @@ def gen_index(tasks=TASKS):
     a file called "index.html".
     """
 
-    todo = list_networks(tasks)
+    todo = list_networks(NETWORK_TYPES)
 
     if len(todo.keys()) > 0:
         body = "<ul>"

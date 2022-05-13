@@ -69,22 +69,28 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
 
 
         # GBQ connection setup
-        config = set_up_env()
+        set_up_env()
         user_login()
 
-        
-        # Build the networks for each file (default: overwrite existing files)
-        for task in TASKS:
-            for f in files:
-                printInfo("Processing file: {}".format(f), "comment")
 
+        # Build the networks for each file (default: overwrite existing files)
+        for f in files:
+            printInfo("Processing file: {}".format(f), "comment")
+            metadata = extract_query_metadata(f)
+            printInfo("Metadata: {}".format(metadata), "comment")
+            
+            for task in metadata["network_types"]:
                 if task == 'collab_orgs':
-                    network.gen_orgs_collab_network(f, config['collab_orgs'], fulldimensions, verbose)
+                    network.gen_orgs_collab_network(f, metadata, fulldimensions, verbose)
                 elif task == 'concepts':
-                    network.gen_concept_network(f, config['concepts'], fulldimensions, verbose)
+                    network.gen_concept_network(f, metadata, fulldimensions, verbose)
+                else:
+                    printDebug("Failed to start network generation of type: {}".format(task), "red")
+                    printDebug("   ... your query configuration does not match the valid network types: {}".format(NETWORK_TYPES), "comment")
 
         # always rebuild the index when network data is generated
         buildindex = True
+
 
 
     if buildindex:
