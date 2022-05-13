@@ -36,7 +36,7 @@ with open(path.join(HERE, "requirements.txt"), encoding="utf-8") as f:
                 REQUIREMENTS_DATA.append([l.split("=")[0]])
 
 setup(
-    name="dim-networkgen",
+    name="dimensions-network",
     version=VERSIONSTRING,
     description="Dimensions network graph generation.",
     long_description=long_description,
@@ -50,6 +50,6 @@ setup(
     install_requires=REQUIREMENTS_DATA,
     entry_points="""
         [console_scripts]
-        dim-networkgen = src.main_cli:main_cli
+        dimensions-network = src.main_cli:main_cli
     """,
 )

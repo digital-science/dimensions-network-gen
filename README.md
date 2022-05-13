@@ -1,11 +1,11 @@
 # Dimensions Network Generation tool
 
-A Python tool for creating network visualizations powered by data from Dimensions on Google BigQuery. 
+A Python tool that streamlines the process of creating network visualizations powered by data from Dimensions on Google BigQuery. 
 
 
 ## Visualization
 
-Currenlty the main output visualization supported is [VOSviewer](https://www.vosviewer.com/). More visualizations will be added in the future.
+Currenlty the only output visualization supported is [VOSviewer](https://www.vosviewer.com/). More visualizations will be added in the future.
 
 ### Live examples
 
@@ -13,7 +13,7 @@ Available at https://digital-science.github.io/dimensions-network-gen/index.html
 
 ## Datasets
 
-By default the tool uses the [Dimensions COVID-19 dataset](https://console.cloud.google.com/marketplace/product/digitalscience-public/covid-19-dataset-dimensions) that is openly available on the Google Cloud Marketplace, and contains all published articles and preprints, grants, clinical trials, and research datasets from Dimensions.ai that are related to COVID-19.
+By default the tool uses the [Dimensions COVID-19 dataset](https://console.cloud.google.com/marketplace/product/digitalscience-public/covid-19-dataset-dimensions). The dataset is openly available on the Google Cloud Marketplace and contains all published articles and preprints, grants, clinical trials, and research datasets from Dimensions.ai that are related to COVID-19.
 
 At time of writing (May 2022), the dataset contains:
 
@@ -25,18 +25,32 @@ At time of writing (May 2022), the dataset contains:
 * 36k+ Research Organizations
 
 
-### How to use the full Dimensions dataset
+### Using the full Dimensions dataset
 
-The tool can be updated to so use the full Dimensions dataset (subscription-based). 
+Users with an active subscription to the full [Dimensions on Google BigQuery](https://www.dimensions.ai/products/bigquery) dataset can perform network analyses using all data in Dimensions, not just the COVID19 subset.  
 
-Pass the `-d` option when invoking the script. 
+In order to do so, pass the `--fulldimensions` (or `-f`) option when invoking the script. E.g.
+
+```
+$ dimensions-network {SQL_QUERY_FILE} --fulldimensions
+```
+
+### Data model
+
+See the [official documentation](https://docs.dimensions.ai/bigquery/data-sources.html).
 
 
-## Requirements
+## Prerequisites
 
 ### BigQuery 
 
-If you are only viewing already-created networks, no external software is required. However, **connecting to BigQuery to generate new networks requires the installation of the Google Cloud SDK**, "gcloud," available [directly from Google](https://cloud.google.com/sdk/docs/install). If you can open a terminal and the `gcloud` command is recognized, it has been sufficiently configured.
+[BigQuery](https://cloud.google.com/bigquery/) is a fully-managed, serverless data warehouse that enables scalable analysis over petabytes of data. In order to access the Dimensions datasets, you need to be able to connect to BigQuery using Python. This means:
+
+* **Installing the SDK**. Installing & authorizing the the Google Cloud SDK, "gcloud," available [directly from Google](https://cloud.google.com/sdk/docs/install). If you can open a terminal and the `gcloud` command is recognized, it has been sufficiently configured.
+* **Setting up a GCP project**. Each time you interact with BigQuery, you need to specify which GCP project you are using. This is used for billing purposes, logging and resources access management. 
+
+Note: BigQuery operates a pay-as-you-query model, meaning that each time you query you'll be billed for the data costs related to that query. Luckily, newly created projects which have no associated billing account provide a [sandbox](https://cloud.google.com/bigquery/docs/sandbox) experience, providing initial access to the [free tier](https://cloud.google.com/free) of BigQuery provided by Google, which is more than enough for using this library.  
+
 
 ### Input files
 
@@ -62,7 +76,7 @@ With Python 3.9 and [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io
 
 ```bash
 $ git clone git@github.com:digital-science/dimensions-network-gen.git
-$ mkvirtualenv dim-network-gen
+$ mkvirtualenv dimensions-network
 $ pip install -r requirements.txt
 $ pip install -e .
 ```
@@ -70,13 +84,13 @@ $ pip install -e .
 
 ## Running
 
-After installation, you can run the application by calling `dim-networkgen`.
+After installation, you can run the application by calling `dimensions-network`.
 
 ```bash
-$ dim-networkgen
-Usage: dim-networkgen [OPTIONS] [FILENAME]...
+$ dimensions-network
+Usage: dimensions-network [OPTIONS] [FILENAME]...
 
-  dim-networkgen: a tool for creating network visualizations powered by data
+  dimensions-network: a tool for creating network visualizations powered by data
   from Dimensions on Google BigQuery. Example:
 
   networkgen {QUERY_FILE}

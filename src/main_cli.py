@@ -36,9 +36,9 @@ def main_cli(ctx, filename=None,
                 fulldimensions=False, 
                 server=False, 
                 port=None,):
-    """dim-networkgen: a tool for creating network visualizations powered by data from Dimensions on Google BigQuery. Example: 
+    """dimensions-network: a tool for creating network visualizations powered by data from Dimensions on Google BigQuery. Example: 
 
-networkgen {QUERY_FILE}
+dimensions-network {QUERY_FILE}
 
 QUERY_FILE. File name containing the GBQ query to be converted into a network. If a folder is passed, all files in the folder will be processed.     
 """
