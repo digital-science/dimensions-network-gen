@@ -24,6 +24,7 @@ At time of writing (May 2022), the dataset contains:
 * 32k+ Research Datasets
 * 36k+ Research Organizations
 
+Data model: see the [official documentation](https://docs.dimensions.ai/bigquery/data-sources.html).
 
 ### Using the full Dimensions dataset
 
@@ -35,9 +36,6 @@ In order to do so, pass the `--fulldimensions` (or `-f`) option when invoking th
 $ dimensions-network {SQL_QUERY_FILE} --fulldimensions
 ```
 
-### Data model
-
-See the [official documentation](https://docs.dimensions.ai/bigquery/data-sources.html).
 
 
 ## Prerequisites
@@ -47,7 +45,7 @@ See the [official documentation](https://docs.dimensions.ai/bigquery/data-source
 [BigQuery](https://cloud.google.com/bigquery/) is a fully-managed, serverless data warehouse that enables scalable analysis over petabytes of data. In order to access the Dimensions datasets, you need to be able to connect to BigQuery using Python. This means:
 
 * **Installing the SDK**. Installing & authorizing the the Google Cloud SDK, "gcloud," available [directly from Google](https://cloud.google.com/sdk/docs/install). If you can open a terminal and the `gcloud` command is recognized, it has been sufficiently configured.
-* **Setting up a GCP project**. Each time you interact with BigQuery, you need to specify which GCP project you are using. This is used for billing purposes, logging and resources access management. 
+* **Setting up a GCP project**. Each time you interact with BigQuery, you need to specify which GCP project you are using. This is used for billing purposes, logging and resources access management. More info [here](https://docs.dimensions.ai/bigquery/gcp-setup.html).
 
 Note: BigQuery operates a pay-as-you-query model, meaning that each time you query you'll be billed for the data costs related to that query. Luckily, newly created projects which have no associated billing account provide a [sandbox](https://cloud.google.com/bigquery/docs/sandbox) experience, providing initial access to the [free tier](https://cloud.google.com/free) of BigQuery provided by Google, which is more than enough for using this library.  
 
