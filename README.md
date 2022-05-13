@@ -36,13 +36,11 @@ In order to do so, pass the `--fulldimensions` (or `-f`) option when invoking th
 $ dimensions-network {SQL_QUERY_FILE} --fulldimensions
 ```
 
+### Accessing BigQuery 
 
+[Google BigQuery](https://cloud.google.com/bigquery/) is cloud database that enables scalable analysis over petabytes of data. 
 
-## Prerequisites
-
-### BigQuery 
-
-[BigQuery](https://cloud.google.com/bigquery/) is a fully-managed, serverless data warehouse that enables scalable analysis over petabytes of data. In order to access the Dimensions datasets, you need to be able to connect to BigQuery using Python. This means:
+In order to access the Dimensions datasets, you need to be able to connect to BigQuery using Python. This means:
 
 * **Installing the SDK**. Installing & authorizing the the Google Cloud SDK, "gcloud," available [directly from Google](https://cloud.google.com/sdk/docs/install). If you can open a terminal and the `gcloud` command is recognized, it has been sufficiently configured.
 * **Setting up a GCP project**. Each time you interact with BigQuery, you need to specify which GCP project you are using. This is used for billing purposes, logging and resources access management. More info [here](https://docs.dimensions.ai/bigquery/gcp-setup.html).
@@ -50,22 +48,6 @@ $ dimensions-network {SQL_QUERY_FILE} --fulldimensions
 Note: BigQuery operates a pay-as-you-query model, meaning that each time you query you'll be billed for the data costs related to that query. Luckily, newly created projects which have no associated billing account provide a [sandbox](https://cloud.google.com/bigquery/docs/sandbox) experience, providing initial access to the [free tier](https://cloud.google.com/free) of BigQuery provided by Google, which is more than enough for using this library.  
 
 
-### Input files
-
-* Network-level configuration options are defined in the file at `user-input/config.ini`.
-* Each visualization generated is based on a subset of publications that you can define using SQL. **Example SQL definitions are stored in the `user-input-examples/` directory**.
-* Each file should contain a single SQL query that returns a list of Dimensions publication IDs **in a field called `id`**.
-* File names should be of the format `$title.sql`.
-  * For example, a file called `archaeology.sql` will create a network listed under the title "archaeology".
-
-Example contents of `last_30_days.sql`:
-
-```sql
-select id
-from `covid-19-dimensions-ai.data.publications`
-where 
-EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
-```
 
 
 ## Installation
@@ -107,6 +89,31 @@ Options:
   --verbose             Verbose mode
   --help                Show this message and exit.
 ```
+
+### Input files
+
+* Network-level configuration options are defined in the file at `user-input/config.ini`.
+* Each visualization generated is based on a subset of publications that you can define using SQL. **Example SQL definitions are stored in the `user-input-examples/` directory**.
+* Each file should contain a single SQL query that returns a list of Dimensions publication IDs **in a field called `id`**.
+* File names should be of the format `$title.sql`.
+  * For example, a file called `archaeology.sql` will create a network listed under the title "archaeology".
+
+Example contents of `last_30_days.sql`:
+
+```sql
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
+```
+
+### Output visualizations
+
+These are addded to the folder `user-outputs` which is automatically created after running an extraction. 
+
+The folder contains a static website consisting of HTML, JS and JSON assets. The website uses relative links hence it can be published on web server *as is*. For example, see the `/docs` folder in this repository, which is viewable at https://digital-science.github.io/dimensions-network-gen/index.html. 
+
+In order to browse the output folder locally, run the server utility: `dimensions-network -s`. That will start a server on http://127.0.0.1:8009/
 
 
 ## Screenshots
