@@ -4,6 +4,10 @@ A Python tool that streamlines the process of creating [scientific networks visu
 
 Currenlty the only output visualization supported is [VOSviewer](https://www.vosviewer.com/). More visualizations will be added in the future.
 
+Examples:
+
+* https://digital-science.github.io/dimensions-network-gen/index.html
+
 
 ## Datasets
 

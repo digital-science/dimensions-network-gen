@@ -193,7 +193,7 @@ def gen_index():
 
             for network_type in network_types:
             
-                _url = f"vosviewer/vosviewer.html?json=/json/{network_type}/{topic}.json&max_label_length=60&max_n_links=500&repulsion=2"
+                _url = f"vosviewer.html?json=json/{network_type}/{topic}.json&max_label_length=60&max_n_links=500&repulsion=2"
                 body += f"""<li><a href='{_url}' target='_blank'>{network_type}</a></li>"""
 
             body += """</div></div></div>"""
