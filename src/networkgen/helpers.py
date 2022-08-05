@@ -186,16 +186,17 @@ def gen_index():
     if len(todo.keys()) > 0:
         body = ""
         for topic, network_types in todo.items():
-            body += """<div class="-col-md-4 card card-body bg-light" style="width: 18rem;">"""
+            body += """<div class="col-md-4"><div class="card"> """
             topic_nice = topic.replace("_", " ").replace("-", " ").capitalize()
-            body += f"<h3>Query: {topic_nice}</h3>"
+            body += f"<h6 class='card-header'>Query: {topic_nice}</h6>"
+            body += """<div class="card-body">Visualizations:"""
 
             for network_type in network_types:
             
                 _url = f"vosviewer/vosviewer.html?json=/json/{network_type}/{topic}.json&max_label_length=60&max_n_links=500&repulsion=2"
-                body += f"<li><a href='{_url}' target='_blank'>{network_type}</a></li>"
+                body += f"""<li><a href='{_url}' target='_blank'>{network_type}</a></li>"""
 
-            body += """</div>"""
+            body += """</div></div></div>"""
 
         body += "<hr>"
     else:
