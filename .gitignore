@@ -47,6 +47,5 @@ docsrc/_build/*
 .idea
 .vsdocs
 
-private
+sql-tests
 README_PRIVATE.md
-user-outputs/*
