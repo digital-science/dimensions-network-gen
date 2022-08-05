@@ -8,7 +8,7 @@ from collections import defaultdict
 import configparser
 import os
 import subprocess
-import shutil
+from shutil import copytree, ignore_patterns
 import click
 
 from ..settings import *
@@ -16,86 +16,11 @@ from . import bqdata
 
 
 
-def extract_query_metadata(sql_file):
-    """
-    Extracts metadata from a SQL file. 
-    
-    Return values found or defaults if not found.
-    If a value provided is not accepted, raise an exception.
-
-    """
-
-    with open(sql_file, "r") as input:
-        data = input.readlines()
-
-    METADATA = dict(NETWORK_PARAMETERS_DEFAULT)
-
-    for p in NETWORK_PARAMETERS_DEFAULT:
-        for l in data:
-            if l.startswith("--"):
-                l = l.strip("--").strip()
-                if p+":" in l:
-                    l = l.split(":")
-                    METADATA[p] = l[1].strip()
-
-    # turn the comma separated string into a list we can iterate over
-    METADATA["network_types"] = METADATA["network_types"].replace(",", " ").split()
-    return METADATA
-
-
-def gbq_dataset_name(fulldimensions_flag):
-    """
-    Returns the name of the dataset in Google BigQuery.
-    """
-    if not fulldimensions_flag:
-        return "covid-19-dimensions-ai.data"
-    else:
-        return "dimensions-ai.data_analytics"
-
-
-def set_up_env():
-    "Set up basic environment"
-    
-
-    # make sure output directories are there
-    for task in NETWORK_TYPES:
-        try:
-            os.makedirs(f'{DEFAULT_OUTPUT_NETWORKS}/{task}')
-        except FileExistsError:
-            pass
-
-    # copy all static files
-    shutil.copytree(PROJECT_STATIC_FOLDER, DEFAULT_OUTPUT_LOCATION, dirs_exist_ok=True)
-
-    return
-
-
-
-def list_networks(tasks, root=DEFAULT_OUTPUT_NETWORKS):
-    """
-    Returns the filenames of all files (and directories)
-    ending with a ".json" extension in the web/networks directory.
-
-    Inputs:
-        - tasks (list): Each type of network the script generates.
-            Corresponds to the names of the directories within 'root'
-        - root (string): Each task has a separate output directory.
-            This is the path to the directory that holds those
-            directories. Ex: "web/networks"
-    """
-
-    results = defaultdict(list)
-    for task in tasks:
-        # HACK: we should make sure all files are there for both types
-        output_names = os.listdir(f'{root}/{task}')
-        filtered = [x[:-5] for x in output_names if x[-5:] == '.json']
-
-        for topic in filtered:
-            results[topic].append(task)
-
-    return results
-
-
+#
+#
+# GOOGLE & GBQ UTILITIES
+#
+#
 
 
 def _test_user_login():
@@ -140,11 +65,162 @@ def user_login():
     output, error = process.communicate()
 
 
+def gbq_dataset_name(fulldimensions_flag):
+    """
+    Returns the name of the dataset in Google BigQuery.
+    """
+    if not fulldimensions_flag:
+        return "covid-19-dimensions-ai.data"
+    else:
+        return "dimensions-ai.data_analytics"
 
 
-# """
+
+
+
+#
+#
+# FILES & SQL PARSING UTILITIES
+#
+#
+
+
+
+def set_up_env():
+    "Set up basic environment"
+    
+
+    # make sure output directories are there
+    for task in NETWORK_TYPES:
+        try:
+            os.makedirs(f'{DEFAULT_OUTPUT_JSON_PATH}/{task}')
+        except FileExistsError:
+            pass
+
+    # copy all static files
+    copytree(PROJECT_STATIC_PATH, DEFAULT_OUTPUT_PATH, dirs_exist_ok=True, ignore=ignore_patterns('index_template.html',))
+
+    return
+
+
+
+def extract_query_metadata(sql_file):
+    """
+    Extracts metadata from a SQL file. 
+    
+    Return values found or defaults if not found.
+    If a value provided is not accepted, raise an exception.
+
+    """
+
+    with open(sql_file, "r") as input:
+        data = input.readlines()
+
+    METADATA = dict(NETWORK_PARAMETERS_DEFAULT)
+
+    for p in NETWORK_PARAMETERS_DEFAULT:
+        for l in data:
+            if l.startswith("--"):
+                l = l.strip("--").strip()
+                if p+":" in l:
+                    l = l.split(":")
+                    METADATA[p] = l[1].strip()
+
+    # turn the comma separated string into a list we can iterate over
+    METADATA["network_types"] = METADATA["network_types"].replace(",", " ").split()
+    return METADATA
+
+
+
+
+
+
+#
+#
+# INDEX CREATION UTILITIES
+#
+#
+
+
+
+def list_networks(tasks, root=DEFAULT_OUTPUT_JSON_PATH):
+    """
+    Returns the filenames of all files (and directories)
+    ending with a ".json" extension in the web/networks directory.
+
+    Inputs:
+        - tasks (list): Each type of network the script generates.
+            Corresponds to the names of the directories within 'root'
+        - root (string): Each task has a separate output directory.
+            This is the path to the directory that holds those
+            directories. Ex: "web/networks"
+
+    Returns:
+        A dict with format {'sql-topic-name': ['collab_orgs', 'concepts']}
+    """
+
+    results = defaultdict(list)
+    for task in tasks:
+        # HACK: we should make sure all files are there for both types
+        output_names = os.listdir(f'{root}/{task}')
+        filtered = [x[:-5] for x in output_names if x[-5:] == '.json']
+
+        for topic in filtered:
+            results[topic].append(task)
+
+    return results
+
+
+
+
+def gen_index():
+    """
+    Generates the dynamic component of the web page that
+    displays links to all the generated networks. Combines
+    input data with "index_template.html" to generate
+    a file called "index.html".
+    """
+
+    todo = list_networks(NETWORK_TYPES)
+
+    if len(todo.keys()) > 0:
+        body = ""
+        for topic, network_types in todo.items():
+            body += """<div class="-col-md-4 card card-body bg-light" style="width: 18rem;">"""
+            topic_nice = topic.replace("_", " ").replace("-", " ").capitalize()
+            body += f"<h3>Query: {topic_nice}</h3>"
+
+            for network_type in network_types:
+            
+                _url = f"vosviewer/vosviewer.html?json=/json/{network_type}/{topic}.json&max_label_length=60&max_n_links=500&repulsion=2"
+                body += f"<li><a href='{_url}' target='_blank'>{network_type}</a></li>"
+
+            body += """</div>"""
+
+        body += "<hr>"
+    else:
+        body = "<em>(No network definitions were found.)</em>"
+
+    with open(f'{PROJECT_STATIC_PATH}/index_template.html', "r") as input:
+        template = input.read()
+    template = template.replace('<!-- BODY HERE -->', body)
+
+    with open(f'{DEFAULT_OUTPUT_PATH}/index.html', "w") as output:
+        output.write(template)
+
+
+
+
+
+
+
+#
+#
 # Generic Python utils 
-# """
+#
+#
+
+
 
 def printDebug(text, mystyle="", err=True, **kwargs):
     """Wrapper around click.secho() for printing in colors with various defaults.
