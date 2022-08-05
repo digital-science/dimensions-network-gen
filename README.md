@@ -1,15 +1,9 @@
 # Dimensions Network Generation tool
 
-A Python tool that streamlines the process of creating scientific networks visualizations, by using data from [Dimensions on Google BigQuery](https://www.dimensions.ai/products/bigquery/). 
-
-
-## Visualization
+A Python tool that streamlines the process of creating [scientific networks visualizations](https://digital-science.github.io/dimensions-network-gen/index.html), by using data from [Dimensions on Google BigQuery](https://www.dimensions.ai/products/bigquery/). 
 
 Currenlty the only output visualization supported is [VOSviewer](https://www.vosviewer.com/). More visualizations will be added in the future.
 
-### Live examples
-
-Available at https://digital-science.github.io/dimensions-network-gen/index.html (source code in the `/docs` folder).
 
 ## Datasets
 
@@ -38,15 +32,12 @@ $ dimensions-network {SQL_QUERY_FILE} --fulldimensions
 
 ### Accessing BigQuery 
 
-[Google BigQuery](https://cloud.google.com/bigquery/) is cloud database that enables scalable analysis over petabytes of data. 
-
-In order to access the Dimensions datasets, you need to be able to connect to BigQuery using Python. This means:
+In order to access the Dimensions datasets, you need to be able to connect to [Google BigQuery](https://cloud.google.com/bigquery/) using Python. This means:
 
 * **Installing the SDK**. Installing & authorizing the the Google Cloud SDK, "gcloud," available [directly from Google](https://cloud.google.com/sdk/docs/install). If you can open a terminal and the `gcloud` command is recognized, it has been sufficiently configured.
-* **Setting up a GCP project**. Each time you interact with BigQuery, you need to specify which GCP project you are using. This is used for billing purposes, logging and resources access management. More info [here](https://docs.dimensions.ai/bigquery/gcp-setup.html).
+* **Setting up a GCP project**. Each time you interact with BigQuery, you need to specify which GCP project you are using. This is generally used for resources access management. More info [here](https://docs.dimensions.ai/bigquery/gcp-setup.html).
 
-Note: BigQuery operates a pay-as-you-query model, meaning that each time you query you'll be billed for the data costs related to that query. Luckily, newly created projects which have no associated billing account provide a [sandbox](https://cloud.google.com/bigquery/docs/sandbox) experience, providing initial access to the [free tier](https://cloud.google.com/free) of BigQuery provided by Google, which is more than enough for using this library.  
-
+Note: newly created projects which have no associated billing account provide a [sandbox](https://cloud.google.com/bigquery/docs/sandbox) experience, providing initial access to the [free tier](https://cloud.google.com/free) of BigQuery provided by Google. The free tier is more than enough for using this library.  
 
 
 
@@ -73,7 +64,7 @@ Usage: dimensions-network [OPTIONS] [FILENAME]...
   dimensions-network: a tool for creating network visualizations powered by data
   from Dimensions on Google BigQuery. Example:
 
-  networkgen {QUERY_FILE}
+  dimensions-network {QUERY_FILE}
 
   QUERY_FILE. File name containing the GBQ query to be converted into a
   network. If a folder is passed, all files in the folder will be processed.
@@ -90,14 +81,17 @@ Options:
   --help                Show this message and exit.
 ```
 
-### Input files
+## Input files
 
-* Each visualization generated is based on a subset of publications that you can define using SQL. **Example SQL definitions are stored in the `user-input-examples/` directory**.
+Visualizations are generated based on a subset of publications that you can define using SQL.
+
+* Each visualization is triggered by a corresponding SQL file containing a query and, optionally, some configuration directives. 
+* Example SQL definitions are stored in the `user-input-examples/` directory.
 * Each file should contain a single SQL query that returns a list of Dimensions publication IDs **in a field called `id`**.
 * File names should be of the format `$title.sql`.
   * For example, a file called `archaeology.sql` will create a network listed under the title "archaeology".
 
-Example contents of `last_30_days.sql`:
+E.g. these are the contents of `last_30_days.sql`:
 
 ```sql
 select id
@@ -108,7 +102,7 @@ EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
 
 ### Network configuration
 
-Network-level configuration options are defined in the SQL files as commented lines with a predefined keyword. For example:
+Network configuration options can be optionally defined in the SQL files before your query, as a series of commented lines starting with a predefined keyword. For example:
 
 ```sql
 -- network_types: concepts, collab_orgs
@@ -124,7 +118,7 @@ EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
 and altmetrics.score > 1
 ```
 
-If omitted, the default configuration values will be used.
+If omitted, the default configuration values will be used. These are all the possible configurations and their meaning.
 
 | Option                | Default               | Notes                                                                                                                                                                    |
 |-----------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -137,9 +131,9 @@ If omitted, the default configuration values will be used.
 
 
 
-### Output visualizations
+## Output visualizations
 
-These are addded to the folder `user-outputs` which is automatically created after running an extraction. 
+Generated visualizations get added to the folder `user-outputs`, which is automatically created after running an extraction. 
 
 The folder contains a static website consisting of HTML, JS and JSON assets. The website uses relative links hence it can be published on web server *as is*. For example, see the `/docs` folder in this repository, which is viewable at https://digital-science.github.io/dimensions-network-gen/index.html. 
 
