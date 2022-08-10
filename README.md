@@ -109,7 +109,7 @@ EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
 Network configuration options can be optionally defined in the SQL files before your query, as a series of commented lines starting with a predefined keyword. For example:
 
 ```sql
--- network_types: concepts, collab_orgs
+-- network_types: concepts, organizations
 -- max_nodes: 400 
 -- min_edge_weight: 3
 -- min_concept_relevance: 0.5 
@@ -126,7 +126,7 @@ If omitted, the default configuration values will be used. These are all the pos
 
 | Option                | Default               | Notes                                                                                                                                                                    |
 |-----------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| network_types         | concepts, collab_orgs | Currenlty two network types are supported.                                                                                                                               |
+| network_types         | concepts, organizations | Currenlty two network types are supported.                                                                                                                               |
 | max_nodes             | 500                   | How many nodes should be displayed, at maximum?                                                                                                                          |
 | min_edge_weight       | 3                     | How many edges should two nodes share before they are linked in the network?                                                                                             |
 | min_concept_relevance | 0.5                   | Each concept tagged to a publication is assigned a relevance score between 0 and 1. What is the threshold that must be cleared before we consider a concept as relevant? |

@@ -86,7 +86,7 @@ def gbq_dataset_name(fulldimensions_flag):
 
 
 
-def set_up_env():
+def set_up_env(verbose=True):
     "Set up basic environment"
     
 
@@ -100,11 +100,14 @@ def set_up_env():
     # copy all static files
     copytree(PROJECT_STATIC_PATH, DEFAULT_OUTPUT_PATH, dirs_exist_ok=True, ignore=ignore_patterns('index_template.html',))
 
+    if verbose:
+        printInfo(f"  Copied static files", "comment")
+
     return
 
 
 
-def extract_query_metadata(sql_file):
+def extract_query_metadata(sql_file, verbose=False):
     """
     Extracts metadata from a SQL file. 
     
@@ -128,6 +131,11 @@ def extract_query_metadata(sql_file):
 
     # turn the comma separated string into a list we can iterate over
     METADATA["network_types"] = METADATA["network_types"].replace(",", " ").split()
+
+    if verbose:
+        printInfo("Network parameters:", "comment")
+        for k,v in METADATA.items():
+            printInfo(f"  -{k}: {v}", "comment")
     return METADATA
 
 
@@ -156,7 +164,7 @@ def list_networks(tasks, root=DEFAULT_OUTPUT_JSON_PATH):
             directories. Ex: "web/networks"
 
     Returns:
-        A dict with format {'sql-topic-name': ['collab_orgs', 'concepts']}
+        A dict with format {'sql-topic-name': ['organizations', 'concepts']}
     """
 
     results = defaultdict(list)
@@ -180,25 +188,26 @@ def gen_index():
     input data with "index_template.html" to generate
     a file called "index.html".
     """
+    printInfo("Generating index page..")
 
     todo = list_networks(NETWORK_TYPES)
 
     if len(todo.keys()) > 0:
         body = ""
         for topic, network_types in todo.items():
-            body += """<div class="col-md-4"><div class="card"> """
+            body += """<div class="col-md-6"><div class="card"> """
             topic_nice = topic.replace("_", " ").replace("-", " ").capitalize()
-            body += f"<h6 class='card-header'>Query: {topic_nice}</h6>"
+            body += f"<h6 class='card-header'>Topic: <span style='color: darkred'>{topic_nice}</span></h6>"
             body += """<div class="card-body">Visualizations:"""
 
             for network_type in network_types:
             
-                _url = f"vosviewer.html?json=json/{network_type}/{topic}.json&max_label_length=60&max_n_links=500&repulsion=2"
+                _url = f"wrapper.html?topicId={topic}&network={network_type}"
                 body += f"""<li><a href='{_url}' target='_blank'>{network_type}</a></li>"""
 
             body += """</div></div></div>"""
 
-        body += "<hr>"
+        body += ""
     else:
         body = "<em>(No network definitions were found.)</em>"
 
@@ -206,9 +215,11 @@ def gen_index():
         template = input.read()
     template = template.replace('<!-- BODY HERE -->', body)
 
-    with open(f'{DEFAULT_OUTPUT_PATH}/index.html', "w") as output:
+    outpath = f'{DEFAULT_OUTPUT_PATH}/index.html'
+    with open(outpath, "w") as output:
         output.write(template)
 
+    printInfo(f"  Saved: {outpath}", "comment")
 
 
 

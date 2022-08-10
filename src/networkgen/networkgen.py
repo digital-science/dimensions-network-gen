@@ -27,8 +27,8 @@ def gen_orgs_collab_network(sql_file, config, fulldimensions=False, verbose=Fals
     with open(sql_file, "r") as input:
         subquery = input.read()
 
-    printDebug(f'Starting orgs collaboration network generation for:', "important")
-    printDebug(f'  ... {sql_file}', "comment")
+    printDebug(f'Building orgs collaboration network..')
+    printDebug(f'  File: {sql_file}', "comment")
 
     # fetch links
     q = f"""
@@ -89,11 +89,11 @@ def gen_orgs_collab_network(sql_file, config, fulldimensions=False, verbose=Fals
 
     data = db.send_query(q, params=params)
 
-    printDebug('  Network data retrieved from BigQuery.')
+    printDebug('  Network data retrieved from BigQuery.', "comment")
 
     json_file_name = sql_file.split("/")[-1].replace(' ', '_').replace('.sql', '.json')
     render_vosviewer_json(data, 'Organizations', 'Publication',
-        f"{DEFAULT_OUTPUT_JSON_PATH}/collab_orgs/{json_file_name}")
+        f"{DEFAULT_OUTPUT_JSON_PATH}/organizations/{json_file_name}")
 
 
 
@@ -118,8 +118,8 @@ def gen_concept_network(sql_file, config,  fulldimensions=False, verbose=False):
     with open(sql_file, "r") as input:
         subquery = input.read()
 
-    printDebug(f'Starting concept co-occurrence network generation for:', "important")
-    printDebug(f'  ... {sql_file}', "comment")
+    printDebug(f'Building concept co-occurrence network..')
+    printDebug(f'  File: {sql_file}', "comment")
 
     # fetch links
     q = f"""
@@ -173,7 +173,7 @@ def gen_concept_network(sql_file, config,  fulldimensions=False, verbose=False):
 
     data = db.send_query(q, params=params)
 
-    printDebug('  Network data retrieved from BigQuery.')
+    printDebug('  Network data retrieved from BigQuery.', "comment")
 
 
     # 2022-05-13 TEST 
@@ -287,14 +287,14 @@ def render_vosviewer_json(data, node_label, link_label, outfile_name, node_url="
             # 'description': f"""<a href="https://app.dimensions.ai/discover/publication?facet_researcher={node}">link</a>""",
         })
 
-    printDebug(f"  Nodes: {len(towrite['network']['items'])}. Edges: {len(towrite['network']['links'])}.")
-    printDebug(f'  Writing network information to file:')
-    printDebug(f'  ... {outfile_name}', "green")
+    printDebug(f"  Nodes: {len(towrite['network']['items'])}. Edges: {len(towrite['network']['links'])}.", "comment")
+    printDebug(f'  Writing network information to file:', "comment")
+    printDebug(f'  ... {outfile_name}', "comment")
 
     with open(outfile_name, "w") as outfile:
         json.dump(towrite, outfile)
 
-    printDebug('  Process complete.')
+    printDebug('  Process complete.', "comment")
 
 
 

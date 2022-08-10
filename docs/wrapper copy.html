@@ -1,15 +1,45 @@
 
-
-<!-- UNUSED AS OF 2022-08-05 -->
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Topic Collaboration Network</title>
+    <title>Dimensions VosViewer Networks</title>
+
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        #header {
+            background: lightgrey;
+            min-height: 10%;
+            height: 10%;
+        }
+
+        iframe {
+            width: 100%;
+            width: 100vw;
+            height: 90%;
+            height: 90vh;
+            max-width:100%;
+            max-height: 90%;
+            border: 0;
+        }
+    </style>
+    
 </head>
 <body style="margin: 0; padding: 0;">
+    <div id="header"><h3>header</h3>
+    </div>
     <div id="placeholder"></div>
 
     <script>
@@ -23,11 +53,11 @@
         params = ""
 
         switch(network) {
-            case "collab_orgs":
-                params = "max_label_length=60&max_n_links=5000&repulsion=2&attraction=5&json=networks/collab_orgs/" + topicId + ".json"
+            case "organizations":
+                params = "max_label_length=60&max_n_links=5000&repulsion=2&attraction=5&json=json/organizations/" + topicId + ".json"
                 break;
             case "concepts":
-                params = "?max_n_links=5000&repulsion=2&attraction=5&json=networks/concepts/" + topicId + ".json"
+                params = "?max_n_links=5000&repulsion=2&attraction=5&json=json/concepts/" + topicId + ".json"
                 break;
         }
 

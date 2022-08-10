@@ -1,5 +1,5 @@
 
--- network_types: concepts, collab_orgs
+-- network_types: concepts, organizations
 -- max_nodes: 300 
 -- min_edge_weight: 2
 -- min_concept_relevance: 0.6 

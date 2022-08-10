@@ -6,7 +6,7 @@ import click
 
 from .settings import *
 from .networkgen.helpers import *
-from .networkgen import network 
+from .networkgen import networkgen 
 from .networkgen import server as run_server 
 
 
@@ -48,7 +48,16 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
         printInfo(ctx.get_help())
         return
 
-    if filename:
+    elif buildindex:
+        set_up_env() # rebuild static files
+        gen_index()
+
+
+    elif runserver:
+        run_server.go(port)
+
+
+    elif filename:
 
         # Ensure that files exist and list them
         files = []
@@ -72,33 +81,27 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
 
         # Build the networks for each file (default: overwrite existing files)
         for f in files:
-            printInfo("Processing file: {}".format(f))
-            metadata = extract_query_metadata(f)
-            printInfo("Metadata: {}".format(metadata), "comment")
+            printInfo("Reading file: {}".format(f))
+            metadata = extract_query_metadata(f, verbose=True)
+            
             if fulldimensions:
                 printInfo("..using full Dimensions data", "red")
             
             for task in metadata["network_types"]:
-                if task == 'collab_orgs':
-                    network.gen_orgs_collab_network(f, metadata, fulldimensions, verbose)
+                if task == 'organizations':
+                    networkgen.gen_orgs_collab_network(f, metadata, fulldimensions, verbose)
                 elif task == 'concepts':
-                    network.gen_concept_network(f, metadata, fulldimensions, verbose)
+                    networkgen.gen_concept_network(f, metadata, fulldimensions, verbose)
                 else:
                     printDebug("Failed to start network generation of type: {}".format(task), "red")
                     printDebug("   ... your query configuration does not match the valid network types: {}".format(NETWORK_TYPES), "comment")
 
-        # always rebuild the index when network data is generated
-        buildindex = True
-
-
-
-    if buildindex:
+        # rebuild the index page
         gen_index()
-        printInfo("Index page regenerated.", "comment")
 
+        if click.confirm("Start the server?"):
+            run_server.go(port)
 
-    if runserver:
-        run_server.go(port)
 
 
 
