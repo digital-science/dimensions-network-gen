@@ -6,8 +6,7 @@ from . import bqdata
 from ..settings import *
 from .helpers import *
 
-
-
+import shutil 
 
 
 def gen_orgs_collab_network(sql_file, config, fulldimensions=False, verbose=False):
@@ -27,7 +26,7 @@ def gen_orgs_collab_network(sql_file, config, fulldimensions=False, verbose=Fals
     with open(sql_file, "r") as input:
         subquery = input.read()
 
-    printDebug(f'Building orgs collaboration network..')
+    printDebug(f'Building organizations collaboration network..')
     printDebug(f'  File: {sql_file}', "comment")
 
     # fetch links
@@ -92,8 +91,12 @@ def gen_orgs_collab_network(sql_file, config, fulldimensions=False, verbose=Fals
     printDebug('  Network data retrieved from BigQuery.', "comment")
 
     json_file_name = sql_file.split("/")[-1].replace(' ', '_').replace('.sql', '.json')
-    render_vosviewer_json(data, 'Organizations', 'Publication',
-        f"{DEFAULT_OUTPUT_JSON_PATH}/organizations/{json_file_name}")
+    render_vosviewer_json(data, 
+        'Organizations', 
+        'Publication',
+        f"{DEFAULT_OUTPUT_JSON_PATH}/organizations/{json_file_name}",
+        sql_file,
+        )
 
 
 
@@ -189,6 +192,7 @@ def gen_concept_network(sql_file, config,  fulldimensions=False, verbose=False):
                         'Concept', 
                         'Publication',
                         f"{DEFAULT_OUTPUT_JSON_PATH}/concepts/{json_file_name}",
+                        sql_file,
                         node_url,
                         edge_url,
                         )
@@ -199,7 +203,7 @@ def gen_concept_network(sql_file, config,  fulldimensions=False, verbose=False):
 
 
 
-def render_vosviewer_json(data, node_label, link_label, outfile_name, node_url="", edge_url=""):
+def render_vosviewer_json(data, node_label, link_label, outfile_name, sqlfile_path, node_url="", edge_url=""):
     """
     Shared function that accepts pairwise data returned from BigQuery and
     converts it into a VOSviewer JSON file.
@@ -287,12 +291,20 @@ def render_vosviewer_json(data, node_label, link_label, outfile_name, node_url="
             # 'description': f"""<a href="https://app.dimensions.ai/discover/publication?facet_researcher={node}">link</a>""",
         })
 
-    printDebug(f"  Nodes: {len(towrite['network']['items'])}. Edges: {len(towrite['network']['links'])}.", "comment")
-    printDebug(f'  Writing network information to file:', "comment")
-    printDebug(f'  ... {outfile_name}', "comment")
+    printDebug(f"  => Nodes: {len(towrite['network']['items'])}. Edges: {len(towrite['network']['links'])}.", "important")
+    if len(towrite['network']['items']):
+        printDebug(f'  Writing network information to file:', "comment")
+        printDebug(f'  ... {outfile_name}', "comment")
+        with open(outfile_name, "w") as outfile:
+            json.dump(towrite, outfile)
 
-    with open(outfile_name, "w") as outfile:
-        json.dump(towrite, outfile)
+        # copy sql for doc purposes
+        folder, filename = os.path.split(sqlfile_path)
+        shutil.copyfile(sqlfile_path, f"{DEFAULT_OUTPUT_SQL_PATH}/{filename}")
+
+    else:
+        printDebug(f'  No nodes found - maybe review your query?', "red")
+
 
     printDebug('  Process complete.', "comment")
 

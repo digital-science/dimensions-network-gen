@@ -23,6 +23,7 @@
             background: lightgrey;
             min-height: 10%;
             height: 10%;
+            padding: 10px
         }
 
         iframe {
@@ -33,6 +34,11 @@
             max-width:100%;
             max-height: 90%;
             border: 0;
+        }
+
+        #topic-id {
+            color: darkred;
+            text-transform: uppercase;
         }
 
         .active-network {
@@ -51,7 +57,7 @@
 </head>
 <body style="margin: 0; padding: 0;">
     <div id="header">
-        Topic: <span id="topic-id" style="color: darkred"></span>
+        Topic: <span id="topic-id"></span>
         &nbsp;&nbsp;&nbsp;&nbsp;
         Network type: <a id="network-id-concepts">concepts</a> | <a id="network-id-organizations">organizations</a>
 

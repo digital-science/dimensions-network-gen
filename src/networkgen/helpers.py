@@ -97,6 +97,9 @@ def set_up_env(verbose=True):
         except FileExistsError:
             pass
 
+    if not os.path.exists(DEFAULT_OUTPUT_SQL_PATH):
+        os.makedirs(DEFAULT_OUTPUT_SQL_PATH)
+
     # copy all static files
     copytree(PROJECT_STATIC_PATH, DEFAULT_OUTPUT_PATH, dirs_exist_ok=True, ignore=ignore_patterns('index_template.html',))
 
@@ -192,22 +195,30 @@ def gen_index():
 
     todo = list_networks(NETWORK_TYPES)
 
+    def get_sqlquery_contents(topic):
+        try:
+            with open(f"{DEFAULT_OUTPUT_SQL_PATH}/{topic}.sql", "r") as input:
+                return input.read()
+        except:
+            return "No SQL found"
+
     if len(todo.keys()) > 0:
         body = ""
         for topic, network_types in todo.items():
             body += """<div class="col-md-6"><div class="card"> """
             topic_nice = topic.replace("_", " ").replace("-", " ").capitalize()
-            body += f"<h6 class='card-header'>Topic: <span style='color: darkred'>{topic_nice}</span></h6>"
-            body += """<div class="card-body">Visualizations:"""
-
-            for network_type in network_types:
+            # body += f"<h6 class='card-header'>Topic: <span style='color: darkred'>{topic_nice}</span></h6>"
             
-                _url = f"wrapper.html?topicId={topic}&network={network_type}"
-                body += f"""<li><a href='{_url}' target='_blank'>{network_type}</a></li>"""
+            _url = f"wrapper.html?topicId={topic}&network={network_types[0]}"
+            body += f"<h6 class='card-header'>Topic: <a href='{_url}' target='_blank'>{topic_nice}</a></h6>"
+            body += """<div class="card-body"><small>Query:</small> <br /><br />"""
 
-            body += """</div></div></div>"""
+            sql = get_sqlquery_contents(topic).replace("\n", "<br>")
+            sql = get_sqlquery_contents(topic)
+            body += f"""<pre>{sql}</pre></div></div></div>"""
 
         body += ""
+
     else:
         body = "<em>(No network definitions were found.)</em>"
 

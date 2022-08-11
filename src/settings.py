@@ -15,12 +15,13 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(HERE))  # one level above 'networ
 PROJECT_STATIC_PATH =  PROJECT_ROOT + "/src/static" 
 DEFAULT_OUTPUT_PATH = PROJECT_ROOT + "/build"
 DEFAULT_OUTPUT_JSON_PATH = DEFAULT_OUTPUT_PATH + "/json"
+DEFAULT_OUTPUT_SQL_PATH = DEFAULT_OUTPUT_PATH + "/sql"
 
 DEFAULT_NETWORK_INIT = PROJECT_ROOT + "/src/networkgen/config_default.ini"
 
 
 # network visualizations tasks available
-NETWORK_TYPES = ['organizations', 'concepts']
+NETWORK_TYPES = ['concepts', 'organizations']
 
 # network visualizations parameters
 NETWORK_PARAMETERS_DEFAULT = {
