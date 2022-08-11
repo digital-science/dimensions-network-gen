@@ -29,6 +29,11 @@ html {
     line-height: 60px; /* Vertically center the text there */
     background-color: #f5f5f5;
   }
+
+  pre {
+    background: #eeeeee;
+    padding: 10px;
+  }
   
         </style>       
     </head>
@@ -49,13 +54,136 @@ html {
                 <div class="col-md-8">
                     <h1 style="text-align: center;">COVID-19 Scientific Networks</h1>
                     <hr>
-                    <p>This website is automatically generated via <code>dimensions-network-gen</code>, a prototype Python application that makes it easier to construct network visualizations of the <a href="https://console.cloud.google.com/marketplace/product/digitalscience-public/covid-19-dataset-dimensions">Dimensions COVID-19 dataset</a> on Google BigQuery. <br />Each topic listed below derives from a separate SQL query and represents the subset of the COVID-19 dataset resulting from that query. Click on the topic in order to view the network visualizations.</p>
+                    <p>The topics listed below correspond to subsets of the <a href="https://console.cloud.google.com/marketplace/product/digitalscience-public/covid-19-dataset-dimensions">Dimensions COVID-19 dataset</a>. Topics are generated using from a specific SQL query. Clicking on the topic allows to explore it using different network visualizations.
+                      <br /><br />This website is automatically generated via <code>dimensions-network-gen</code>, a prototype Python application that makes it easier to construct network visualizations using Dimensions and VosViewer.</p>
                     <hr>
                 </div>
             </div>
 
             <div class="row -justify-content-md-center">
-                <div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>Regexp herd immunity</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=regexp-herd-immunity&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=regexp-herd-immunity&network=concepts' target='_blank'>concepts</a></li></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>2020 pubs with altmetric 1 or more</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=2020-pubs-with-altmetric-1-or-more&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=2020-pubs-with-altmetric-1-or-more&network=concepts' target='_blank'>concepts</a></li></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>Journal nature</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=journal-nature&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=journal-nature&network=concepts' target='_blank'>concepts</a></li></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>Journal science</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=journal-science&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=journal-science&network=concepts' target='_blank'>concepts</a></li></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>2021 pubs with altmetric 1 or more</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=2021-pubs-with-altmetric-1-or-more&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=2021-pubs-with-altmetric-1-or-more&network=concepts' target='_blank'>concepts</a></li></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>Regexp complex science</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=regexp-complex-science&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=regexp-complex-science&network=concepts' target='_blank'>concepts</a></li></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>Only preprints</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=only-preprints&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=only-preprints&network=concepts' target='_blank'>concepts</a></li></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>Regexp conspiracy theory</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=regexp-conspiracy-theory&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=regexp-conspiracy-theory&network=concepts' target='_blank'>concepts</a></li></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>Italian authors</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=italian-authors&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=italian-authors&network=concepts' target='_blank'>concepts</a></li></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>2022 pubs with altmetric 1 or more</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=2022-pubs-with-altmetric-1-or-more&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=2022-pubs-with-altmetric-1-or-more&network=concepts' target='_blank'>concepts</a></li></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <span style='color: darkred'>Last 30 days</span></h6><div class="card-body">Visualizations:<li><a href='wrapper.html?topicId=last_30_days&network=organizations' target='_blank'>organizations</a></li><li><a href='wrapper.html?topicId=last_30_days&network=concepts' target='_blank'>concepts</a></li></div></div></div>
+                <div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=regexp-herd-immunity&network=concepts' target='_blank'>Regexp herd immunity</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>-- max_nodes: 400 
+-- min_edge_weight: 2
+-- min_concept_relevance: 0.6 
+-- min_concept_frequency: 2
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+REGEXP_CONTAINS(abstract.preferred, r'herd.*immunity|immunity.*herd')</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=2020-pubs-with-altmetric-1-or-more&network=concepts' target='_blank'>2020 pubs with altmetric 1 or more</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>-- network_types: concepts, organizations
+-- max_nodes: 300 
+-- min_edge_weight: 2
+-- min_concept_relevance: 0.5 
+-- min_concept_frequency: 5
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+EXTRACT(YEAR FROM date_inserted) = 2020
+and altmetrics.score > 1</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=journal-nature&network=concepts' target='_blank'>Journal nature</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>
+-- network_types: concepts, organizations
+-- max_nodes: 300 
+-- min_edge_weight: 2
+-- min_concept_relevance: 0.5 
+-- min_concept_frequency: 2
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+journal.id = "jour.1018957"</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=journal-science&network=concepts' target='_blank'>Journal science</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>-- network_types: concepts, organizations
+-- max_nodes: 300 
+-- min_edge_weight: 2
+-- min_concept_relevance: 0.5 
+-- min_concept_frequency: 2
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+journal.id = "jour.1346339"</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=2021-pubs-with-altmetric-1-or-more&network=concepts' target='_blank'>2021 pubs with altmetric 1 or more</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>-- network_types: concepts, organizations
+-- max_nodes: 300 
+-- min_edge_weight: 2
+-- min_concept_relevance: 0.5 
+-- min_concept_frequency: 5
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+EXTRACT(YEAR FROM date_inserted) = 2021
+and altmetrics.score > 1</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=regexp-complex-science&network=concepts' target='_blank'>Regexp complex science</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>
+-- network_types: concepts, organizations
+-- max_nodes: 300 
+-- min_edge_weight: 2
+-- min_concept_relevance: 0.6 
+-- min_concept_frequency: 3
+
+-- WARNING: this query uses full Dimensions data
+
+select id
+from `dimensions-ai.data_analytics.publications`
+where 
+REGEXP_CONTAINS(abstract.preferred, r'complexity.*science|science.*complexity')
+
+
+</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=only-preprints&network=concepts' target='_blank'>Only preprints</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>-- network_types: concepts, organizations
+-- max_nodes: 300 
+-- min_edge_weight: 3
+-- min_concept_relevance: 0.5 
+-- min_concept_frequency: 5
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+type="preprint"</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=regexp-conspiracy-theory&network=concepts' target='_blank'>Regexp conspiracy theory</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>
+-- network_types: concepts, organizations
+-- max_nodes: 300 
+-- min_edge_weight: 2
+-- min_concept_relevance: 0.5 
+-- min_concept_frequency: 2
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+REGEXP_CONTAINS(abstract.preferred, r'conspiracy.*theory|theory.*conspiracy')</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=italian-authors&network=concepts' target='_blank'>Italian authors</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>-- max_nodes: 400 
+-- min_edge_weight: 2
+-- min_concept_relevance: 0.7 
+-- min_concept_frequency: 2
+
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+"Italy" in UNNEST(research_org_country_names)</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=2022-pubs-with-altmetric-1-or-more&network=concepts' target='_blank'>2022 pubs with altmetric 1 or more</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>-- network_types: concepts, organizations
+-- max_nodes: 300 
+-- min_edge_weight: 2
+-- min_concept_relevance: 0.5 
+-- min_concept_frequency: 5
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+EXTRACT(YEAR FROM date_inserted) = 2022
+and altmetrics.score > 1</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=last_30_days&network=concepts' target='_blank'>Last 30 days</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>-- network_types: concepts, organizations
+-- max_nodes: 400 
+-- min_edge_weight: 3
+-- min_concept_relevance: 0.5 
+-- min_concept_frequency: 4
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
+and altmetrics.score > 1</pre></div></div></div><div class="col-md-6"><div class="card"> <h6 class='card-header'>Topic: <a href='wrapper.html?topicId=regexp-japan&network=concepts' target='_blank'>Regexp japan</a></h6><div class="card-body"><small>Query:</small> <br /><br /><pre>
+-- network_types: concepts, organizations
+-- max_nodes: 400 
+-- min_edge_weight: 1
+-- min_concept_relevance: 0.4
+-- min_concept_frequency: 2
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+REGEXP_CONTAINS(abstract.preferred, r'japan')
+OR
+REGEXP_CONTAINS(title.preferred, r'japan')</pre></div></div></div>
             </div>
 
             
@@ -72,4 +200,6 @@ html {
 
 
     </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </html>
