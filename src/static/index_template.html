@@ -54,8 +54,12 @@ html {
                 <div class="col-md-8">
                     <h1 style="text-align: center;">COVID-19 Scientific Networks</h1>
                     <hr>
-                    <p>The topics listed below correspond to subsets of the <a href="https://console.cloud.google.com/marketplace/product/digitalscience-public/covid-19-dataset-dimensions">Dimensions COVID-19 dataset</a>. Topics are generated using from a specific SQL query. Clicking on the topic allows to explore it using different network visualizations.
-                      <br /><br />This website is automatically generated via <code>dimensions-network-gen</code>, a prototype Python application that makes it easier to construct network visualizations using Dimensions and VosViewer.</p>
+                    <p>This website was created using <code>dimensions-network-gen</code>, an open-source <a href="https://github.com/digital-science/dimensions-network-gen">Python application</a> that allows to construct network visualizations using the <a href="https://console.cloud.google.com/marketplace/product/digitalscience-public/covid-19-dataset-dimensions">Dimensions COVID-19 dataset</a> and <a  href="https://www.vosviewer.com/">VosViewer</a>.
+                      <br /><br />
+                      The topics listed below correspond to subsets of the Dimensions COVID-19 dataset. Clicking on a topic allows to explore it using different interactive network visualizations.
+                      <br /><br />
+                      New topics can be defined by passing a SQL query returning publication `ids` to the <code>dimensions-network-gen</code> application. The application will then generate the network and visualize it using VosViewer (<a href="https://github.com/digital-science/dimensions-network-gen/blob/main/README.md">more details</a>).
+                    </p>
                     <hr>
                 </div>
             </div>
