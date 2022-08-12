@@ -12,7 +12,7 @@ Currenlty the only output visualization supported is [VOSviewer](https://www.vos
 
 It is possible to generate network analyses on the whole COVID19 database, or using a selected subset of data. This is achieved by letting users input any SQL query defining a COVID-19 document subset of interest (e.g. a group of journals, or a group of countries).
 
-The tool deals with the extraction of data from BigQuery and calculation of the network representation. Currently we have included two possible network calculations:
+The Python application deals with the extraction of data from BigQuery and calculation of the network representation. Currently we have included two possible network calculations:
 1. Concept co-occurrence network. This query generates two-concept pairs and counts how many publications are shared between these concepts (note: concepts in Dimensions are publication-level keywords normalised and weighted based on a relevancy score).
 2. Organisation network. This query generates two-organisations pairs (from the authors affiliations) and counts how many publications are shared between these organisations.
 
