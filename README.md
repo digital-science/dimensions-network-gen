@@ -1,12 +1,22 @@
 # Dimensions Network Generation tool
 
-A Python tool that streamlines the process of creating [scientific networks visualizations](https://digital-science.github.io/dimensions-network-gen/index.html), by using data from [Dimensions on Google BigQuery](https://www.dimensions.ai/products/bigquery/). 
-
+A Python tool that streamlines the process of creating scientific networks visualizations, by using data from [Dimensions on Google BigQuery](https://www.dimensions.ai/products/bigquery/). 
 Currenlty the only output visualization supported is [VOSviewer](https://www.vosviewer.com/). More visualizations will be added in the future.
 
-Examples:
+## What it looks like
 
-* https://digital-science.github.io/dimensions-network-gen/index.html
+* [Sample Networks](https://digital-science.github.io/dim-networkgen-gen/index.html)
+* [screenshots](#screenshots)
+
+## How it works
+
+It is possible to generate network analyses on the whole COVID19 database, or using a selected subset of data. This is achieved by letting users input any SQL query defining a COVID-19 document subset of interest (e.g. a group of journals, or a group of countries).
+
+The tool deals with the extraction of data from BigQuery and calculation of the network representation. Currently we have included two possible network calculations:
+1. Concept co-occurrence network. This query generates two-concept pairs and counts how many publications are shared between these concepts (note: concepts in Dimensions are publication-level keywords normalised and weighted based on a relevancy score).
+2. Organisation network. This query generates two-organisations pairs (from the authors affiliations) and counts how many publications are shared between these organisations.
+
+Finally, the data extracted from BigQuery gets converted into a VOSviewer JSON file and packaged up into an HTML application that can be viewed in a browser. The Python library also includes a local server component that can be used to view the files locally on a computer.
 
 
 ## Datasets
@@ -31,7 +41,7 @@ Users with an active subscription to the full [Dimensions on Google BigQuery](ht
 In order to do so, pass the `--fulldimensions` (or `-f`) option when invoking the script. E.g.
 
 ```
-$ dimensions-network {SQL_QUERY_FILE} --fulldimensions
+$ dim-networkgen {SQL_QUERY_FILE} --fulldimensions
 ```
 
 ### Accessing BigQuery 
@@ -50,8 +60,8 @@ Note: newly created projects which have no associated billing account provide a 
 With Python 3.9 and [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/index.html)
 
 ```bash
-$ git clone git@github.com:digital-science/dimensions-network-gen.git
-$ mkvirtualenv dimensions-network
+$ git clone git@github.com:digital-science/dim-networkgen-gen.git
+$ mkvirtualenv dim-networkgen
 $ pip install -r requirements.txt
 $ pip install -e .
 ```
@@ -59,16 +69,16 @@ $ pip install -e .
 
 ## Running
 
-After installation, you can run the application by calling `dimensions-network`.
+After installation, you can run the application by calling `dim-networkgen`.
 
 ```bash
-$ dimensions-network
-Usage: dimensions-network [OPTIONS] [FILENAME]...
+$ dim-networkgen
+Usage: dim-networkgen [OPTIONS] [FILENAME]...
 
-  dimensions-network: a tool for creating network visualizations powered by data
-  from Dimensions on Google BigQuery. Example:
+  dim-networkgen: a tool for creating network visualizations powered by
+  data from Dimensions on Google BigQuery. Example:
 
-  dimensions-network {QUERY_FILE}
+  dim-networkgen {QUERY_FILE}
 
   QUERY_FILE. File name containing the GBQ query to be converted into a
   network. If a folder is passed, all files in the folder will be processed.
@@ -78,7 +88,7 @@ Options:
                         created networks.
   -f, --fulldimensions  Query using the full Dimensions dataset, instead of
                         the COVID19 subset (note: requires subscription).
-  -s, --server          Start the webserver.
+  -r, --runserver       Run the webserver.
   -p, --port INTEGER    Specify the port on which the webserver should listen
                         for connections (default: 8009).
   --verbose             Verbose mode
@@ -90,7 +100,7 @@ Options:
 Visualizations are generated based on a subset of publications that you can define using SQL.
 
 * Each visualization is triggered by a corresponding SQL file containing a query and, optionally, some configuration directives. 
-* Example SQL definitions are stored in the `user-input-examples/` directory.
+* Sample SQL queries are stored in the `queries` directory.
 * Each file should contain a single SQL query that returns a list of Dimensions publication IDs **in a field called `id`**.
 * File names should be of the format `$title.sql`.
   * For example, a file called `archaeology.sql` will create a network listed under the title "archaeology".
@@ -137,11 +147,11 @@ If omitted, the default configuration values will be used. These are all the pos
 
 ## Output visualizations
 
-Generated visualizations get added to the folder `user-outputs`, which is automatically created after running an extraction. 
+Generated visualizations get added to the folder `build`, which is automatically created after running an extraction. 
 
-The folder contains a static website consisting of HTML, JS and JSON assets. The website uses relative links hence it can be published on web server *as is*. For example, see the `/docs` folder in this repository, which is viewable at https://digital-science.github.io/dimensions-network-gen/index.html. 
+The folder contains a static website consisting of HTML, JS and JSON assets. The website uses relative links hence it can be published on web server *as is*. For example, see the `/docs` folder in this repository, which is viewable at https://digital-science.github.io/dim-networkgen-gen/index.html. 
 
-In order to browse the output folder locally, run the server utility: `dimensions-network -s`. That will start a server on http://127.0.0.1:8009/
+In order to browse the output folder locally, run the server utility: `dim-networkgen -s`. That will start a server on http://127.0.0.1:8009/
 
 
 ## Screenshots
