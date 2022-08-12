@@ -5,8 +5,8 @@ Currenlty the only output visualization supported is [VOSviewer](https://www.vos
 
 ## What it looks like
 
-* [Sample Networks](https://digital-science.github.io/dim-networkgen-gen/index.html)
-* [screenshots](#screenshots)
+* [Live Application](https://digital-science.github.io/dimensions-network-gen/)
+* [Screenshots](#screenshots)
 
 ## How it works
 
@@ -149,7 +149,7 @@ If omitted, the default configuration values will be used. These are all the pos
 
 Generated visualizations get added to the folder `build`, which is automatically created after running an extraction. 
 
-The folder contains a static website consisting of HTML, JS and JSON assets. The website uses relative links hence it can be published on web server *as is*. For example, see the `/docs` folder in this repository, which is viewable at https://digital-science.github.io/dim-networkgen-gen/index.html. 
+The folder contains a static website consisting of HTML, JS and JSON assets. The website uses relative links hence it can be published on web server *as is*. For example, see the `/docs` folder in this repository, which is viewable at https://digital-science.github.io/dimensions-network-gen/. 
 
 In order to browse the output folder locally, run the server utility: `dim-networkgen -s`. That will start a server on http://127.0.0.1:8009/
 
