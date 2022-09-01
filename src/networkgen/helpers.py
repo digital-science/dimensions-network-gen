@@ -143,6 +143,50 @@ def extract_query_metadata(sql_file, verbose=False):
 
 
 
+from string import Template
+from datetime import date
+
+def gen_sql_from_keyword(keyword, verbose=True):
+    """Save a SQL query from a keyword
+    TODO
+    - handle spaces and quotes
+    - handle multi words
+    
+    """
+
+    q = Template("""
+-- AUTOMATICALLY GENERATED KEYWORD SEARCH QUERY
+-- date: $date
+-- max_nodes: 400 
+-- min_edge_weight: 1
+-- min_concept_relevance: 0.5
+-- min_concept_frequency: 2
+
+select id
+from `covid-19-dimensions-ai.data.publications`
+where 
+REGEXP_CONTAINS(abstract.preferred, r'$key')
+OR
+REGEXP_CONTAINS(title.preferred, r'$key')
+    """)
+
+    today = date.today()
+    st = today.strftime("%b-%d-%Y")
+
+    data = q.substitute(key=keyword, date=st)
+    filename = "".join([c for c in keyword if c.isalpha() or c.isdigit() or c==' ']).rstrip().replace(" ", "_")
+    filepath = f"{DEFAULT_INPUT_SQL_PATH}/{filename}.sql"
+
+    with open(filepath, "w") as f:
+        f.write(data)
+
+    if verbose:
+        printInfo(f"  Saved: {filepath}", "comment")
+
+    return filepath
+
+
+
 
 
 
@@ -200,6 +244,7 @@ def gen_index():
             with open(f"{DEFAULT_OUTPUT_SQL_PATH}/{topic}.sql", "r") as input:
                 return input.read()
         except:
+            printInfo(f"  => SQL query for topic '{topic}' not found in {DEFAULT_OUTPUT_SQL_PATH}")
             return "No SQL found"
 
     if len(todo.keys()) > 0:

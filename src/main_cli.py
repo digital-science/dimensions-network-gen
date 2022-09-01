@@ -22,6 +22,9 @@ from .networkgen import server as run_server
     is_flag=True,
     help="Query using the full Dimensions dataset, instead of the COVID19 subset (note: requires subscription).")
 @click.option(
+    "--keyword", "-k",
+    help="Generate a keyword-search SQL query and run it.")
+@click.option(
     "--runserver", "-r",
     is_flag=True,
     help="Run the webserver.")
@@ -34,6 +37,7 @@ def main_cli(ctx, filename=None,
                 verbose=False, 
                 buildindex=False, 
                 fulldimensions=False, 
+                keyword=None, 
                 runserver=False, 
                 port=None,):
     """dim-networkgen: a tool for creating network visualizations powered by data from Dimensions on Google BigQuery. Example: 
@@ -43,21 +47,27 @@ dim-networkgen {QUERY_FILE}
 QUERY_FILE. File name containing the GBQ query to be converted into a network. If a folder is passed, all files in the folder will be processed.     
 """
 
-    if not filename and not runserver and not buildindex:
+    if not filename and not runserver and not buildindex and not keyword:
         # print dir(search_cli)
         printInfo(ctx.get_help())
         return
 
-    elif buildindex:
+    if buildindex:
         set_up_env() # rebuild static files
         gen_index()
+        return
 
 
-    elif runserver:
+    if runserver:
         run_server.go(port)
+        return
+
+    if keyword:
+        query_file = gen_sql_from_keyword(keyword)
+        filename = [query_file]
 
 
-    elif filename:
+    if filename:
 
         # Ensure that files exist and list them
         files = []

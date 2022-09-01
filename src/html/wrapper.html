@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dimensions VosViewer Networks</title>
+
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        #header {
+            background: lightgrey;
+            min-height: 10%;
+            height: 10%;
+            padding: 10px
+        }
+
+        iframe {
+            width: 100%;
+            width: 100vw;
+            height: 90%;
+            height: 90vh;
+            max-width:100%;
+            max-height: 90%;
+            border: 0;
+        }
+
+        #topic-id {
+            color: darkred;
+            text-transform: uppercase;
+        }
+
+        .active-network {
+            color: darkgreen;
+            text-transform: uppercase;
+        }
+
+        .inactive-network {
+            color: black;
+            text-decoration: underline;
+        }
+
+
+    </style>
+
+</head>
+<body style="margin: 0; padding: 0;">
+    <div id="header">
+        Topic: <span id="topic-id"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        Network type: <a id="network-id-concepts">concepts</a> | <a id="network-id-organizations">organizations</a>
+
+        <form id="formViz">
+              <label>max_n_links:</label>
+              <input id="max_n_links" name="max_n_links" value="5000" type="number">
+
+              <label>repulsion:</label>
+              <input id="repulsion" name="repulsion" value="2" type="number">
+
+              <label>attraction:</label>
+              <input id="attraction" name="attraction" value="5" type="number">
+
+              <input id="submit" type="submit">
+          </form>
+    </div>
+    <div id="placeholder"></div>
+
+
+
+    <script>
+        var urlParams = new URLSearchParams(window.location.search);
+        var topicId = urlParams.get('topicId');
+        var network = urlParams.get('network');
+
+        var page_title = "Vosviewer Dimensions Networks";
+
+        document.getElementById("topic-id").innerHTML=topicId;
+
+        if (network == "organizations") {
+            document.getElementById("network-id-organizations").className = "active-network";
+            document.getElementById("network-id-concepts").className = "inactive-network";
+            document.getElementById("network-id-concepts").setAttribute('href', "?topicId=" + topicId + "&network=concepts");
+        } else {
+            document.getElementById("network-id-concepts").className = "active-network";
+            document.getElementById("network-id-organizations").className = "inactive-network";
+            document.getElementById("network-id-organizations").setAttribute('href', "?topicId=" + topicId + "&network=organizations");
+        }
+
+        function loadIFrame(topicId, network) {
+
+            baseReportUrl = "vosviewer.html"
+            params = ""
+
+            switch(network) {
+                case "organizations":
+                    params = "max_label_length=60&max_n_links=5000&repulsion=2&attraction=5&json=json/organizations/" + topicId + ".json"
+                    break;
+                case "concepts":
+                    params = "?max_n_links=5000&repulsion=2&attraction=5&json=json/concepts/" + topicId + ".json"
+                    break;
+            }
+
+            toLoad = baseReportUrl + "?" + params
+
+            document.title = topicId.replace('_', ' ') + " | " + page_title;
+            var ifrm = document.createElement("iframe");
+            ifrm.setAttribute("src", toLoad);
+            ifrm.setAttribute("id", "myIframe");
+            ifrm.frameBorder = "0";
+            ifrm.allowFullscreen = true;
+
+            document.body.appendChild(ifrm);
+
+            var replaceElement = document.querySelector('div#placeholder');
+            replaceElement.parentNode.replaceChild(ifrm, replaceElement);
+
+        }
+
+
+        var form = document.getElementById("formViz");
+
+        function handleForm(event) { 
+            event.preventDefault(); 
+            var max_n_links = document.getElementById("max_n_links").value;
+            var repulsion = document.getElementById("repulsion").value;
+            var attraction = document.getElementById("attraction").value;
+
+            var ifrm = document.getElementById("myIframe");
+            ifrm.setAttribute("src", "vosviewer.html?max_label_length=60&max_n_links=" + max_n_links + "&repulsion=" + repulsion + "&attraction=" + attraction + "&json=json/" + network + "/" + topicId + ".json");
+        } 
+
+        form.addEventListener('submit', handleForm);
+
+
+        loadIFrame(topicId, network);
+
+    </script>
+
+
+</body>
+</html>
