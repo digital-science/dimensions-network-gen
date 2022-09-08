@@ -7,6 +7,7 @@ import click
 from .settings import *
 from .networkgen.helpers import *
 from .networkgen import networkgen 
+from .networkgen import vosviewer 
 from .networkgen import server as run_server 
 
 
@@ -69,7 +70,7 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
 
     if filename:
 
-        # Ensure that files exist and list them
+        # Check if we have a folder, or process a single sql file
         files = []
         if os.path.isdir(filename[0]):
             dir = filename[0]
@@ -89,19 +90,37 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
         user_login()
 
 
-        # Build the networks for each file (default: overwrite existing files)
-        for f in files:
-            printInfo("Reading file: {}".format(f))
-            metadata = extract_query_metadata(f, verbose=True)
+        # Build the networks for each file (default: overwrite pre-existing)
+        for sql_file in files:
+            printInfo("Reading file: {}".format(sql_file))
+            metadata = extract_query_metadata(sql_file, verbose=True)
             
             if fulldimensions:
                 printInfo("..using full Dimensions data", "red")
             
             for task in metadata["network_types"]:
                 if task == 'organizations':
-                    networkgen.gen_orgs_collab_network(f, metadata, fulldimensions, verbose)
+                    db_data = networkgen.gen_orgs_collab_network(sql_file, metadata, fulldimensions, verbose)
+
+                    vosviewer.render_json(
+                        db_data,
+                        'Organization', 
+                        'Publication',
+                        sql_file
+                    )
+
                 elif task == 'concepts':
-                    networkgen.gen_concept_network(f, metadata, fulldimensions, verbose)
+                    db_data = networkgen.gen_concept_network(sql_file, metadata, fulldimensions, verbose)
+                    node_url, edge_url = vosviewer.get_concepts_node_urls()
+
+                    vosviewer.render_json(
+                        db_data,
+                        'Concept', 
+                        'Publication',
+                        sql_file, 
+                        node_url,
+                        edge_url,
+                    )
                 else:
                     printDebug("Failed to start network generation of type: {}".format(task), "red")
                     printDebug("   ... your query configuration does not match the valid network types: {}".format(NETWORK_TYPES), "comment")

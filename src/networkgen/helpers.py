@@ -104,7 +104,7 @@ def set_up_env(verbose=True):
     copytree(PROJECT_STATIC_PATH, DEFAULT_OUTPUT_PATH, dirs_exist_ok=True, ignore=ignore_patterns('index_template.html',))
 
     if verbose:
-        printInfo(f"  Copied static files", "comment")
+        printInfo(f"Output directory set up completed...\t {DEFAULT_OUTPUT_PATH}", "comment")
 
     return
 
