@@ -163,3 +163,9 @@ An organization collaboration network:
 
 ![organizations-network.png](/screenshots/organizations-network.png)
 
+
+
+## Useful links
+
+* Vosviewer docs https://app.vosviewer.com/docs/
+* Dimensions BigQuery docs https://docs.dimensions.ai/bigquery/
