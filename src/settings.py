@@ -32,3 +32,6 @@ NETWORK_PARAMETERS_DEFAULT = {
     'min_concept_relevance': 0.5, 
     'min_concept_frequency': 5, 
 }
+
+
+BASE_DIMENSIONS_URL = """https://app.dimensions.ai/discover/publication?search_text=%222019-nCoV%22%20OR%20%22COVID-19%22%20OR%20%E2%80%9CSARS-CoV-2%E2%80%9D%20OR%20%22HCoV-2019%22%20OR%20%22hcov%22%20OR%20%22NCOVID-19%22%20OR%20%22severe%20acute%20respiratory%20syndrome%20coronavirus%202%22%20OR%20%22severe%20acute%20respiratory%20syndrome%20corona%20virus%202%22%20OR%20%E2%80%9Ccoronavirus%20disease%202019%E2%80%9D%20OR%20((%22coronavirus%22%20OR%20%22corona%20virus%22)%20AND%20(Wuhan%20OR%20China%20OR%20novel)){custom_search}&search_type=kws&search_field=full_search&search_mode=content&or_facet_year=2022&or_facet_year=2021&or_facet_year=2020"""

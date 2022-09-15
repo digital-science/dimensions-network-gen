@@ -104,8 +104,9 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
 
                     vosviewer.render_json(
                         db_data,
+                        task,
                         'Organization', 
-                        'Publication',
+                        'Organization',
                         sql_file
                     )
 
@@ -115,8 +116,9 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
 
                     vosviewer.render_json(
                         db_data,
+                        task,
                         'Concept', 
-                        'Publication',
+                        'Concept',
                         sql_file, 
                         node_url,
                         edge_url,
@@ -127,11 +129,6 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
 
         # rebuild the index page
         gen_index()
-
-        if click.confirm("Start the server?"):
-            run_server.go(port)
-
-
 
 
 
