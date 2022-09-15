@@ -125,7 +125,6 @@ def render_json(data, task, node_label, link_label, sql_file, node_url="", edge_
             elif task == "organizations":
                 grid_id1 = edge[0][edge[0].index("grid"):-1]
                 grid_id2 = edge[1][edge[1].index("grid"):-1]
-                printDebug(grid_id1 + grid_id2, "red")
                 # url_safe = urllib.parse.quote(f' "{edge[0]}" AND "{edge[1]}" ')
                 url_safe = f"&and_facet_research_org={grid_id1}&and_facet_research_org={grid_id2}"
             
