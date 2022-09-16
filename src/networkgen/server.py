@@ -5,7 +5,7 @@ import socketserver
 from ..settings import *
 
 def go(port):
-    web_dir = DEFAULT_OUTPUT_PATH
+    web_dir = DEFAULT_BUILD_PATH
     os.chdir(web_dir)
     Handler = http.server.SimpleHTTPRequestHandler
 

@@ -48,4 +48,5 @@ docsrc/_build/*
 .vsdocs
 
 sql-tests
+topics/json
 README_PRIVATE.md

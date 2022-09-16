@@ -16,11 +16,6 @@ from . import bqdata
 
 
 
-#
-#
-# GOOGLE & GBQ UTILITIES
-#
-#
 
 
 def _test_user_login():
@@ -78,35 +73,118 @@ def gbq_dataset_name(fulldimensions_flag):
 
 
 
-#
-#
-# FILES & SQL PARSING UTILITIES
-#
-#
-
 
 
 def set_up_env(verbose=True):
-    "Set up basic environment"
+    """Set up basic environment
     
+    a) ensure all folders for local topics/json and for the website output are there, so that later we can write into them
+    b) clean up topics json folder ie ensure that all json network files have a corresponding SQL topic defintion - otherwise remove it.
+    """
+    printInfo(f"Setting up application directories ...")
 
-    # make sure output directories are there
+    if not os.path.exists(DEFAULT_TOPICS_JSON_PATH):
+        os.makedirs(DEFAULT_TOPICS_JSON_PATH)
+
     for task in NETWORK_TYPES:
         try:
-            os.makedirs(f'{DEFAULT_OUTPUT_JSON_PATH}/{task}')
+            os.makedirs(f'{DEFAULT_TOPICS_JSON_PATH}/{task}')
         except FileExistsError:
             pass
 
-    if not os.path.exists(DEFAULT_OUTPUT_SQL_PATH):
-        os.makedirs(DEFAULT_OUTPUT_SQL_PATH)
-
-    # copy all static files
-    copytree(PROJECT_STATIC_PATH, DEFAULT_OUTPUT_PATH, dirs_exist_ok=True, ignore=ignore_patterns('index_template.html',))
-
-    if verbose:
-        printInfo(f"Output directory set up completed...\t {DEFAULT_OUTPUT_PATH}", "comment")
+    printInfo(f"Cleaning up unused JSON files... ", "comment")
+    # REMOVE STRAY JSON FILES IF THEY DON'T HAVE A SQL TOPIC
+    for task in NETWORK_TYPES:
+        json_files = os.listdir(f'{DEFAULT_TOPICS_JSON_PATH}/{task}')
+        for f in json_files:
+            f_sql = f.replace(".json", ".sql")
+            if not os.path.exists(f"{DEFAULT_TOPICS_SQL_PATH}/{f_sql}"):
+                os.remove(f'{DEFAULT_TOPICS_JSON_PATH}/{task}/{f}')
+                printInfo(f"\t..deleted {DEFAULT_TOPICS_JSON_PATH}/{task}/{f}", "comment")   
 
     return
+
+
+
+
+
+def get_valid_topics():
+    """List the topics that have both SQL and JSON files
+    """
+    topics = []
+    for task in NETWORK_TYPES:
+        json_files = os.listdir(f'{DEFAULT_TOPICS_JSON_PATH}/{task}')
+        for f in json_files:
+            if f.endswith(".json"):
+                f_sql = f.replace(".json", ".sql")
+                if os.path.exists(f"{DEFAULT_TOPICS_SQL_PATH}/{f_sql}"):
+                    topics += [f_sql] 
+
+    return list(set(topics))
+
+
+
+
+def build_website():
+    """
+    Generates the website listing out all available science maps.
+    Combines input data with "index_template.html" to generate
+    a file called "index.html".
+
+    """
+    printInfo("Generating website pages..")
+
+    # copy all HTML static files
+    copytree(PROJECT_STATIC_PATH, DEFAULT_BUILD_PATH, dirs_exist_ok=True, ignore=ignore_patterns('index_template.html',))
+
+    # copy all TOPICS SQL and JSON
+    copytree(DEFAULT_TOPICS_SQL_PATH, DEFAULT_BUILD_TOPICS_PATH, dirs_exist_ok=True)
+
+    # valid topics are sql files that have a json dataset as well
+    valid_topics = [x.replace(".sql", "") for x in get_valid_topics()]
+    DEFAULT_NETWORK_TYPE = NETWORK_TYPES[0]
+
+    def get_sqlquery_contents(topic):
+        try:
+            with open(f"{DEFAULT_BUILD_TOPICS_PATH}/{topic}.sql", "r") as input:
+                return input.read()
+        except:
+            printInfo(f"  => SQL query for topic '{topic}' not found in {DEFAULT_BUILD_TOPICS_PATH}")
+            return "No SQL found"
+
+    if len(valid_topics) > 0:
+        body = ""
+        for topic in sorted(valid_topics):
+            body += """<div class="col-md-6"><div class="card"> """
+            topic_nice = topic.replace("_", " ").replace("-", " ").capitalize()
+            # body += f"<h6 class='card-header'>Topic: <span style='color: darkred'>{topic_nice}</span></h6>"
+            
+            _url = f"wrapper.html?topicId={topic}&network={DEFAULT_NETWORK_TYPE}"
+            body += f"<h6 class='card-header'>Topic: <a href='{_url}' target='_blank'>{topic_nice}</a></h6>"
+            body += """<div class="card-body"><small>Query:</small> <br /><br />"""
+
+            sql = get_sqlquery_contents(topic)
+            body += f"""<pre>{sql}</pre></div></div></div>"""
+
+        body += ""
+
+    else:
+        body = "<em>(No network definitions were found.)</em>"
+
+    with open(f'{PROJECT_STATIC_PATH}/index_template.html', "r") as input:
+        template = input.read()
+    template = template.replace('<!-- BODY HERE -->', body)
+
+    outpath = f'{DEFAULT_BUILD_PATH}/index.html'
+    with open(outpath, "w") as output:
+        output.write(template)
+
+    printInfo(f"  Saved: {outpath}", "comment")
+
+
+
+
+
 
 
 
@@ -175,7 +253,7 @@ REGEXP_CONTAINS(title.preferred, r'$key')
 
     data = q.substitute(key=keyword, date=st)
     filename = "".join([c for c in keyword if c.isalpha() or c.isdigit() or c==' ']).rstrip().replace(" ", "_")
-    filepath = f"{DEFAULT_INPUT_SQL_PATH}/{filename}.sql"
+    filepath = f"{DEFAULT_TOPICS_SQL_PATH}/{filename}.sql"
 
     with open(filepath, "w") as f:
         f.write(data)
@@ -187,95 +265,6 @@ REGEXP_CONTAINS(title.preferred, r'$key')
 
 
 
-
-
-
-#
-#
-# INDEX CREATION UTILITIES
-#
-#
-
-
-
-def list_networks(tasks, root=DEFAULT_OUTPUT_JSON_PATH):
-    """
-    Returns the filenames of all files (and directories)
-    ending with a ".json" extension in the web/networks directory.
-
-    Inputs:
-        - tasks (list): Each type of network the script generates.
-            Corresponds to the names of the directories within 'root'
-        - root (string): Each task has a separate output directory.
-            This is the path to the directory that holds those
-            directories. Ex: "web/networks"
-
-    Returns:
-        A dict with format {'sql-topic-name': ['organizations', 'concepts']}
-    """
-
-    results = defaultdict(list)
-    for task in tasks:
-        # HACK: we should make sure all files are there for both types
-        output_names = os.listdir(f'{root}/{task}')
-        filtered = [x[:-5] for x in output_names if x[-5:] == '.json']
-
-        for topic in filtered:
-            results[topic].append(task)
-
-    return results
-
-
-
-
-def gen_index():
-    """
-    Generates the dynamic component of the web page that
-    displays links to all the generated networks. Combines
-    input data with "index_template.html" to generate
-    a file called "index.html".
-    """
-    printInfo("Generating index page..")
-
-    todo = list_networks(NETWORK_TYPES)
-
-    def get_sqlquery_contents(topic):
-        try:
-            with open(f"{DEFAULT_OUTPUT_SQL_PATH}/{topic}.sql", "r") as input:
-                return input.read()
-        except:
-            printInfo(f"  => SQL query for topic '{topic}' not found in {DEFAULT_OUTPUT_SQL_PATH}")
-            return "No SQL found"
-
-    if len(todo.keys()) > 0:
-        body = ""
-        for topic, network_types in todo.items():
-            body += """<div class="col-md-6"><div class="card"> """
-            topic_nice = topic.replace("_", " ").replace("-", " ").capitalize()
-            # body += f"<h6 class='card-header'>Topic: <span style='color: darkred'>{topic_nice}</span></h6>"
-            
-            _url = f"wrapper.html?topicId={topic}&network={network_types[0]}"
-            body += f"<h6 class='card-header'>Topic: <a href='{_url}' target='_blank'>{topic_nice}</a></h6>"
-            body += """<div class="card-body"><small>Query:</small> <br /><br />"""
-
-            sql = get_sqlquery_contents(topic).replace("\n", "<br>")
-            sql = get_sqlquery_contents(topic)
-            body += f"""<pre>{sql}</pre></div></div></div>"""
-
-        body += ""
-
-    else:
-        body = "<em>(No network definitions were found.)</em>"
-
-    with open(f'{PROJECT_STATIC_PATH}/index_template.html', "r") as input:
-        template = input.read()
-    template = template.replace('<!-- BODY HERE -->', body)
-
-    outpath = f'{DEFAULT_OUTPUT_PATH}/index.html'
-    with open(outpath, "w") as output:
-        output.write(template)
-
-    printInfo(f"  Saved: {outpath}", "comment")
 
 
 

@@ -13,10 +13,11 @@ HERE = os.path.abspath(__file__)
 PROJECT_ROOT = os.path.dirname(os.path.dirname(HERE))  # one level above 'networkgen' folder
 
 PROJECT_STATIC_PATH =  PROJECT_ROOT + "/src/html" 
-DEFAULT_INPUT_SQL_PATH = PROJECT_ROOT + "/topics"
-DEFAULT_OUTPUT_PATH = PROJECT_ROOT + "/build"
-DEFAULT_OUTPUT_JSON_PATH = DEFAULT_OUTPUT_PATH + "/json"
-DEFAULT_OUTPUT_SQL_PATH = DEFAULT_OUTPUT_PATH + "/sql"
+DEFAULT_TOPICS_SQL_PATH = PROJECT_ROOT + "/topics"
+DEFAULT_TOPICS_JSON_PATH = DEFAULT_TOPICS_SQL_PATH + "/json"
+
+DEFAULT_BUILD_PATH = PROJECT_ROOT + "/build"
+DEFAULT_BUILD_TOPICS_PATH = DEFAULT_BUILD_PATH + "/topics"
 
 DEFAULT_NETWORK_INIT = PROJECT_ROOT + "/src/networkgen/config_default.ini"
 

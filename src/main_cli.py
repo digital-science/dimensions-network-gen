@@ -6,8 +6,8 @@ import click
 
 from .settings import *
 from .networkgen.helpers import *
-from .networkgen import networkgen 
-from .networkgen import vosviewer 
+from .networkgen.networkgen import * 
+from .networkgen.vosviewer import *
 from .networkgen import server as run_server 
 
 
@@ -55,7 +55,7 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
 
     if buildindex:
         set_up_env() # rebuild static files
-        gen_index()
+        build_website()
         return
 
 
@@ -85,9 +85,8 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
             return
 
 
-        # GBQ connection setup
         set_up_env()
-        user_login()
+        user_login() # GBQ connection setup
 
 
         # Build the networks for each file (default: overwrite pre-existing)
@@ -99,10 +98,10 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
                 printInfo("..using full Dimensions data", "red")
             
             for task in metadata["network_types"]:
-                if task == 'organizations':
-                    db_data = networkgen.gen_orgs_collab_network(sql_file, metadata, fulldimensions, verbose)
 
-                    vosviewer.render_json(
+                if task == 'organizations':
+                    db_data = gen_orgs_collab_network(sql_file, metadata, fulldimensions, verbose)
+                    render_json(
                         db_data,
                         task,
                         'Organization', 
@@ -111,24 +110,20 @@ QUERY_FILE. File name containing the GBQ query to be converted into a network. I
                     )
 
                 elif task == 'concepts':
-                    db_data = networkgen.gen_concept_network(sql_file, metadata, fulldimensions, verbose)
-                    node_url, edge_url = vosviewer.get_concepts_node_urls()
-
-                    vosviewer.render_json(
+                    db_data = gen_concept_network(sql_file, metadata, fulldimensions, verbose)
+                    render_json(
                         db_data,
                         task,
                         'Concept', 
                         'Concept',
                         sql_file, 
-                        node_url,
-                        edge_url,
                     )
                 else:
                     printDebug("Failed to start network generation of type: {}".format(task), "red")
                     printDebug("   ... your query configuration does not match the valid network types: {}".format(NETWORK_TYPES), "comment")
 
-        # rebuild the index page
-        gen_index()
+        # rebuild the website
+        build_website()
 
 
 

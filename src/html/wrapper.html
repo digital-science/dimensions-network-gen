@@ -105,10 +105,10 @@
 
             switch(network) {
                 case "organizations":
-                    params = "max_label_length=60&max_n_links=5000&repulsion=2&attraction=5&json=json/organizations/" + topicId + ".json"
+                    params = "max_label_length=60&max_n_links=5000&repulsion=2&attraction=5&json=topics/json/organizations/" + topicId + ".json"
                     break;
                 case "concepts":
-                    params = "?max_n_links=5000&repulsion=2&attraction=5&json=json/concepts/" + topicId + ".json"
+                    params = "?max_n_links=5000&repulsion=2&attraction=5&json=topics/json/concepts/" + topicId + ".json"
                     break;
             }
 
@@ -138,7 +138,7 @@
             var attraction = document.getElementById("attraction").value;
 
             var ifrm = document.getElementById("myIframe");
-            ifrm.setAttribute("src", "vosviewer.html?max_label_length=60&max_n_links=" + max_n_links + "&repulsion=" + repulsion + "&attraction=" + attraction + "&json=json/" + network + "/" + topicId + ".json");
+            ifrm.setAttribute("src", "vosviewer.html?max_label_length=60&max_n_links=" + max_n_links + "&repulsion=" + repulsion + "&attraction=" + attraction + "&json=topics/json/" + network + "/" + topicId + ".json");
         } 
 
         form.addEventListener('submit', handleForm);
