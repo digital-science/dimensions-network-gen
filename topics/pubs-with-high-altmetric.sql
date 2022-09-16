@@ -3,8 +3,9 @@
 -- min_edge_weight: 2
 -- min_concept_relevance: 0.5 
 -- min_concept_frequency: 5
-
-select id
-from `covid-19-dimensions-ai.data.publications`
-WHERE altmetrics.score > 20
-AND "China" in UNNEST(research_org_country_names)
+SELECT
+    id
+FROM
+    `covid-19-dimensions-ai.data.publications`
+WHERE
+    altmetrics.score > 20

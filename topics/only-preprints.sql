@@ -3,8 +3,10 @@
 -- min_edge_weight: 3
 -- min_concept_relevance: 0.5 
 -- min_concept_frequency: 5
-
-select id
-from `covid-19-dimensions-ai.data.publications`
-where 
-type="preprint"
+SELECT
+    id
+FROM
+    `covid-19-dimensions-ai.data.publications`
+WHERE
+    TYPE = "preprint"
+    AND altmetrics.score > 5
