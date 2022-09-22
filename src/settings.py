@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-Settings for dim-networkgen module
+Settings for dimensions-networks module
 """
 
 import os

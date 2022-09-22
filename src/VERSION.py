@@ -7,6 +7,6 @@ __license__ = "MIT"
 __author__ = "Richard Abdill / Michele Pasin"
 __author_email__ = "m dot pasin at digital-science dot com"
 
-USAGE = "networkgen [options]"
+USAGE = "dimensions-networks [options]"
 VERSION = "v" + __version__
 AGENT = "%s/%s" % (__name__, __version__)
