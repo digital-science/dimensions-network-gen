@@ -100,7 +100,7 @@ Options:
 Visualizations are generated based on a subset of publications that you can define using SQL.
 
 * Each visualization is triggered by a corresponding SQL file containing a query and, optionally, some configuration directives. 
-* Sample SQL queries are stored in the `queries` directory.
+* SQL queries are stored in the `topics` directory.
 * Each file should contain a single SQL query that returns a list of Dimensions publication IDs **in a field called `id`**.
 * File names should be of the format `$title.sql`.
   * For example, a file called `archaeology.sql` will create a network listed under the title "archaeology".
@@ -113,6 +113,14 @@ from `covid-19-dimensions-ai.data.publications`
 where 
 EXTRACT(DATE FROM date_inserted) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
 ```
+
+And this is how you're generate a network from that query:
+
+```bash
+$ dimensions-networks topics/last_30_days.sql
+```
+
+
 
 ### Network configuration
 

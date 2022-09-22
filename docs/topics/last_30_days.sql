@@ -1,3 +1,4 @@
+-- Publications from last 30 days with an altmetric score > 10
 -- network_types: concepts, organizations
 -- max_nodes: 400 
 -- min_edge_weight: 3
@@ -13,4 +14,4 @@ WHERE
         FROM
             date_inserted
     ) >= DATE_ADD(CURRENT_DATE(), INTERVAL -30 DAY)
-    AND altmetrics.score > 1
+    AND altmetrics.score > 10

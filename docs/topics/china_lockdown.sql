@@ -11,4 +11,8 @@ WHERE
     REGEXP_CONTAINS(
         title.preferred,
         r'chin.*lockdown|lockdown.*chin'
+    ) OR 
+        REGEXP_CONTAINS(
+        abstract.preferred,
+        r'chin.*lockdown|lockdown.*chin'
     )
